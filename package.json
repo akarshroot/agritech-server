@@ -1,0 +1,26 @@
+{
+  "name": "agritech-server",
+  "version": "1.0.0",
+  "description": "Server for Project AgriTech",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akarshroot/agritech-server.git"
+  },
+  "keywords": [
+    "agriculture",
+    "technology"
+  ],
+  "author": "Akarsh Tripathi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/akarshroot/agritech-server/issues"
+  },
+  "homepage": "https://github.com/akarshroot/agritech-server#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
