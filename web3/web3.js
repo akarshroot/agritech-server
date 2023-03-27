@@ -1,7 +1,6 @@
 const Web3 = require("web3");
 
 const web3 = new Web3('http://34.131.60.175');
-// const signer = new Web3
 
 const abi = [
 	{
@@ -284,15 +283,13 @@ const Caddress = "0x1cE8c5Ccf95154C3B5A806f90392B62A1540052e"
 
 const contract = new web3.eth.Contract(abi,Caddress)
 
-// let balance = 0;
-const deciamlVal = 1000000000000000000n
-
 async function getFunction(accountAddress){
     let bal = await contract.methods.balanceOf(accountAddress).call()
-	bal = BigInt(bal)
-	const toReturn = bal/deciamlVal
-	console.log(parseFloat(toReturn))
-	return parseFloat(toReturn)
+	const ans = Web3.utils.fromWei(bal,"ether")
+	return ans
 }
-
-module.exports = getFunction
+getFunction('0x2ee4961905E3c9B6eC890d5F919224Ad6BD87637')
+module.exports = {
+	getFunction,
+	web3
+}

@@ -1,4 +1,4 @@
-const getFunction=require("../web3/web3")
+const {getFunction}=require("../web3/web3")
 
 const web3Router = require("express").Router()
 
