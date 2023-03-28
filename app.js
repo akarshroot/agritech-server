@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors")
-const web3Router=require("./controller/web3Router");
+const web3Router=require("./controllers/web3Router");
 const app = express()
 
 app.use(cors())
@@ -10,6 +10,7 @@ app.get('/',(req,res) => {
     console.log("Home")
     res.send("Server")
 })
-app.use('/web3',web3Router)
+app.use('/web3/wallet',web3Router)
+app.use('/web3/fundingContracts',web3Router)
 
 module.exports = app

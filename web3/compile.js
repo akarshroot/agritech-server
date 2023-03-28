@@ -2,7 +2,9 @@ const solc = require("solc")
 const fs = require("fs")
 
 const fileAddress = './contracts/funding.sol'
-const readFile = fs.readFileSync(fileAddress);
+const readFile = fs.readFileSync(fileAddress,'utf8');
+
+// console.log(readFile.toString())
 
 var input = {
     language: 'Solidity',
