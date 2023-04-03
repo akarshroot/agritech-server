@@ -2,10 +2,10 @@ const { Router } = require("express")
 const User = require("../models/User.js")
 const bcrypt = require("bcrypt")
 const generateTokens = require("../utils/generateTokens.js")
-const {
-	signUpBodyValidation,
-	logInBodyValidation,
-} = require("../utils/validationSchema.js")
+// const {
+// 	signUpBodyValidation,
+// 	logInBodyValidation,
+// } = require("../utils/validationSchema.js")
 const Wallet = require("../models/Wallet.js")
 
 const router = Router();
@@ -13,11 +13,11 @@ const router = Router();
 // signup
 router.post("/signup", async (req, res) => {
 	try {
-		const { error } = signUpBodyValidation(req.body);
-		if (error)
-			return res
-				.status(400)
-				.json({ error: true, message: error.details[0].message });
+		// const { error } = signUpBodyValidation(req.body);
+		// if (error)
+		// 	return res
+		// 		.status(400)
+		// 		.json({ error: true, message: error.details[0].message });
 
 		const user = await User.findOne({ email: req.body.email });
 		if (user)
@@ -42,11 +42,11 @@ router.post("/signup", async (req, res) => {
 // login
 router.post("/login", async (req, res) => {
 	try {
-		const { error } = logInBodyValidation(req.body);
-		if (error)
-			return res
-				.status(400)
-				.json({ error: true, message: error.details[0].message });
+		// const { error } = logInBodyValidation(req.body);
+		// if (error)
+		// 	return res
+		// 		.status(400)
+		// 		.json({ error: true, message: error.details[0].message });
 
 		const user = await User.findOne({ email: req.body.email });
 		if (!user)
@@ -91,3 +91,10 @@ router.post("/login", async (req, res) => {
 });
 
 module.exports = router;
+
+
+/**
+ * Class and state management
+ * Lifecycle
+ * Routing
+ */
