@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "cls && nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,10 @@
   },
   "homepage": "https://github.com/akarshroot/agritech-server#readme",
   "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cookie-parser": "^1.4.6",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
     "nodemon": "^2.0.21"
   },
   "devDependencies": {

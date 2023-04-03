@@ -6,7 +6,11 @@ const web3RouterFunding=require("./routes/web3RouterFunding");
 const User = require("./models/User.js");
 const app = express()
 const {info}=require("./utils/logger");
+const authRoutes = require("./routes/AuthRoutes")
+const refreshTokenRoute = require("./routes/refreshToken")
+const cookies = require("cookie-parser");
 
+app.use(cookies());
 app.use(cors())
 app.use(express.json())
 
@@ -26,11 +30,10 @@ app.get('/',(req,res) => {
     info("Home")
     res.send("Server")
 })
-
 app.use('/web3/wallet',web3Router)
 app.use('/web3/fundingContracts',web3RouterFunding)
-
-
+app.use("/api/auth", authRoutes)
+app.use("/api/refreshToken", refreshTokenRoute)
 
 
 module.exports = app

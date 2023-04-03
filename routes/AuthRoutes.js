@@ -1,12 +1,12 @@
 const { Router } = require("express")
 const User = require("../models/User.js")
 const bcrypt = require("bcrypt")
-const generateTokens = require("../utils/generateTokens.js")
+const generateTokens = require("../utils/generateTokens.js");
+const { info } = require("../utils/logger.js");
 // const {
 // 	signUpBodyValidation,
 // 	logInBodyValidation,
 // } = require("../utils/validationSchema.js")
-const Wallet = require("../models/Wallet.js")
 
 const router = Router();
 
@@ -18,7 +18,7 @@ router.post("/signup", async (req, res) => {
 		// 	return res
 		// 		.status(400)
 		// 		.json({ error: true, message: error.details[0].message });
-
+		info(req.body)
 		const user = await User.findOne({ email: req.body.email });
 		if (user)
 			return res
@@ -29,7 +29,6 @@ router.post("/signup", async (req, res) => {
 		const hashPassword = await bcrypt.hash(req.body.password, salt);
 
 		const userDoc = await new User({ ...req.body, password: hashPassword }).save();
-		await new Wallet({ userId: userDoc._id }).save()
 		res
 			.status(201)
 			.json({ error: false, message: "Account created sucessfully" });
@@ -71,7 +70,7 @@ router.post("/login", async (req, res) => {
 				secure: true,
 				sameSite: "none",
 			})
-			.cookie("checkToken", true, {
+			.cookie("isLoggedIn", true, {
 				maxAge: 604800000,// same as above
 				secure: true,
 				sameSite: "none",
