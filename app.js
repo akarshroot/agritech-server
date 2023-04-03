@@ -1,8 +1,8 @@
 const express = require("express");
 const cors = require("cors")
 const { default: mongoose } = require("mongoose");
-const web3Router=require("./controllers/web3Router");
-const web3RouterFunding=require("./controllers/web3RouterFunding");
+const web3Router=require("./routes/web3Router");
+const web3RouterFunding=require("./routes/web3RouterFunding");
 const User = require("./models/User.js");
 const app = express()
 const {info}=require("./utils/logger");
