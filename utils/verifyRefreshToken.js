@@ -1,6 +1,5 @@
 const UserToken = require("../models/UserToken.js")
 const jwt = require("jsonwebtoken");
-const { info, warn } = require("./logger.js");
 
 const verifyRefreshToken = (refreshToken) => {
 	const privateKey = process.env.REFRESH_TOKEN_PRIVATE_KEY;

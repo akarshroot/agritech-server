@@ -2,6 +2,7 @@ const { Router } = require("express")
 const User = require("../models/User.js")
 const bcrypt = require("bcrypt")
 const generateTokens = require("../utils/generateTokens.js");
+const { addAccount } = require("../web3/web3Wallet.js");
 const { info } = require("../utils/logger.js");
 // const {
 // 	signUpBodyValidation,
@@ -18,7 +19,6 @@ router.post("/signup", async (req, res) => {
 		// 	return res
 		// 		.status(400)
 		// 		.json({ error: true, message: error.details[0].message });
-		info(req.body)
 		const user = await User.findOne({ email: req.body.email });
 		if (user)
 			return res
@@ -27,13 +27,16 @@ router.post("/signup", async (req, res) => {
 
 		const salt = await bcrypt.genSalt(Number(process.env.SALT));
 		const hashPassword = await bcrypt.hash(req.body.password, salt);
-
-		const userDoc = await new User({ ...req.body, password: hashPassword }).save();
+		const walletAddress = await addAccount(hashPassword)
+		info(walletAddress)
+		const userDoc = await new User({ ...req.body, password: hashPassword, walletAddress: walletAddress }).save();
 		res
 			.status(201)
 			.json({ error: false, message: "Account created sucessfully" });
+		
+		
 	} catch (err) {
-		console.log(err);
+		console.log(err.message);
 		res.status(500).json({ error: true, message: "Internal Server Error" });
 	}
 });
@@ -90,10 +93,3 @@ router.post("/login", async (req, res) => {
 });
 
 module.exports = router;
-
-
-/**
- * Class and state management
- * Lifecycle
- * Routing
- */
