@@ -27,7 +27,7 @@ router.post("/signup", async (req, res) => {
 
 		const salt = await bcrypt.genSalt(Number(process.env.SALT));
 		const hashPassword = await bcrypt.hash(req.body.password, salt);
-		const walletAddress = await addAccount(hashPassword)
+		const walletAddress = await addAccount(req.body.password)
 		info(walletAddress)
 		const userDoc = await new User({ ...req.body, password: hashPassword, walletAddress: walletAddress }).save();
 		res
