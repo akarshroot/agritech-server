@@ -1,42 +1,5 @@
 const FundingABI = [
 	{
-		"inputs": [],
-		"name": "contribute",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_reason",
-				"type": "string"
-			},
-			{
-				"internalType": "address",
-				"name": "_reciver",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "createRequest",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "refund",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -61,52 +24,77 @@ const FundingABI = [
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_reqNumber",
+				"name": "_tokenamount",
 				"type": "uint256"
 			}
 		],
-		"name": "voteRequest",
-		"outputs": [],
+		"name": "Approvetokens",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [
+		"inputs": [],
+		"name": "GetAllowance",
+		"outputs": [
 			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
 		],
-		"name": "allRequests",
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "GetContractTokenBalance",
 		"outputs": [
 			{
-				"internalType": "string",
-				"name": "reason",
-				"type": "string"
-			},
-			{
-				"internalType": "address payable",
-				"name": "reciver",
-				"type": "address"
-			},
-			{
 				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "completed",
-				"type": "bool"
-			},
-			{
-				"internalType": "uint256",
-				"name": "numberOfVoters",
+				"name": "",
 				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "GetUserTokenBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tokenamount",
+				"type": "uint256"
+			}
+		],
+		"name": "contribute",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -131,19 +119,6 @@ const FundingABI = [
 	{
 		"inputs": [],
 		"name": "deadline",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getRaisedAmount",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -497,7 +472,8 @@ const CoinsABI = [
 		"type": "function"
 	}
 ]
-const Caddress = "0x1cE8c5Ccf95154C3B5A806f90392B62A1540052e"
+// const Caddress = "0x1cE8c5Ccf95154C3B5A806f90392B62A1540052e"
+const Caddress = "0xEa290a8F4fFdf0ca97ccf721c16812F71f8Deffb"
 
 module.exports = {
 	FundingABI,

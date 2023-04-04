@@ -42,11 +42,20 @@ const userSchema = new mongoose.Schema({
             _id: false
         }
     ],
+    ownedContracts:[
+        {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref:'ContractMod'
+        }
+    ],
     createdAt: {
         type: Date,
         default: () => Date.now(),
         immutable: true
     },
+    transactions:{
+        type:String
+    }
 });
 
 // Export the model

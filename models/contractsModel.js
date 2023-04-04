@@ -7,10 +7,10 @@ const contractSchema = new mongoose.Schema({
     deadline:Number,
     minContri:Number,
     dateCreated:Date,
-    // manager:{
-    //     type: mongoose.SchemaTypes.ObjectId,
-    //     ref: 'user'
-    // }
+    manager:{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'User'
+    }
 })
 
 const ContractModal = mongoose.model('ContractMod',contractSchema)

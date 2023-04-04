@@ -11,7 +11,7 @@ async function deployContract(account,password, target,deadline,minContribution)
     if(unlocked){
         const preDeploy = await contract.deploy({ data: bytecode, arguments:[target,deadline,minContribution]})
         info("preDeployed -->",preDeploy)
-        const estimateGasFee = await preDeploy.estimateGas()*1.5
+        const estimateGasFee = await preDeploy.estimateGas()*2
         info("Predicted fee -->",estimateGasFee)
         const deployedContract = await preDeploy.send({ from: account, gas:estimateGasFee })
         info(deployedContract._address)
@@ -21,6 +21,6 @@ async function deployContract(account,password, target,deadline,minContribution)
     }
 }
 
-// deployContract('0x879005ce3b64a880e1512d759cecb1bd857590f8',"1234567890")
+// deployContract('0x879005ce3b64a880e1512d759cecb1bd857590f8',"1234567890", 10000,3600,100)
 
 module.exports = deployContract
