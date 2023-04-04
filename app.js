@@ -3,7 +3,6 @@ const cors = require("cors")
 const { default: mongoose } = require("mongoose");
 const web3Router=require("./routes/web3Router");
 const web3RouterFunding=require("./routes/web3RouterFunding");
-const User = require("./models/User.js");
 const app = express()
 const {info}=require("./utils/logger");
 

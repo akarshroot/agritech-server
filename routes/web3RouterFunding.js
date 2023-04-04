@@ -1,3 +1,4 @@
+const User=require("../models/User");
 const ContractModal=require("../models/contractsModel");
 const {info}=require("../utils/logger");
 const deployContract=require("../web3/deploy");
@@ -14,37 +15,63 @@ web3RouterFunding.get("/:id", async (req,res) => {
 })
 
 web3RouterFunding.post('/deployContract',async (req,res) => {
+    const testContractAddress = 'THIS IS A TEST CONTRACT ADDRESS'
     const data = req.body
     info(data)
-
-    const address = await deployContract(
-        data.walletAddress,
-        data.password,
-        data.target,
-        data.deadline,
-        data.minContribution,
-    )
-    
-    if(address!=='Incorrect Password (Account not Unlocked)'){
-        const newContractModel = new ContractModal({
-            title:data.title,
-            address: data.walletAddress,
-            target: data.target,
-            deadline: data.deadline,
-            minContri: data.minContribution,
-            date: new Date(),
-            // manager: 'UserIDhere'
-        })
-
-        info(newContractModel)
-        info(address._address)
-        res.json({
-            status:"Deployed Successfully",
-            address:address._address
-        })
-    }
+    const manager = await User.findById(data.userId)
+    info(manager)
+    const newContractModel = new ContractModal({
+        title:data.title,
+        address: testContractAddress,
+        target: data.target,
+        deadline: data.deadline,
+        minContri: data.minContribution,
+        date: new Date(),
+        manager: manager._id
+    })
+    const saved = await newContractModel.save()
+    info(saved)
+    manager.ownedContracts.push(saved._id.toString())
+    await manager.save()
+    // info(address._address)
+    res.json({
+        status:"Deployed Successfully",
+        // address:address._address
+    })
 
 })
+// web3RouterFunding.post('/deployContract',async (req,res) => {
+//     const data = req.body
+//     info(data)
+
+//     const address = await deployContract(
+//         data.walletAddress,
+//         data.password,
+//         data.target,
+//         data.deadline,
+//         data.minContribution,
+//     )
+    
+//     if(address!=='Incorrect Password (Account not Unlocked)'){
+//         const newContractModel = new ContractModal({
+//             title:data.title,
+//             address: data.walletAddress,
+//             target: data.target,
+//             deadline: data.deadline,
+//             minContri: data.minContribution,
+//             date: new Date(),
+//             // manager: 'UserIDhere'
+//         })
+
+//         info(newContractModel)
+//         info(address._address)
+//         res.json({
+//             status:"Deployed Successfully",
+//             address:address._address
+//         })
+//     }
+
+// })
 
 
 module.exports = web3RouterFunding
