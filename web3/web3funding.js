@@ -28,15 +28,13 @@ async function getRaisedAmount(contract){
         return 'No Contract selected'
     }
 }
-async function contributeIn(contract,amount, contributerAddress, contributorPassword){
+async function contributeIn(contract, contributerAddress, amount,contributorPassword){
 
     const unlocked = await web3.eth.personal.unlockAccount(contributerAddress,contributorPassword,300)
     // const approvalRes = await giveApproval()
     if(contract && unlocked){
-        const res = await contract.methods.contribute()
-        res.send({
-            from: contributerAddress,
-            value: Web3.utils.toWei((amount+''),'ether')
+        const res = await contract.methods.contribute(amount).send({
+            from:contributerAddress
         })
         info(res)
         return res
@@ -55,5 +53,6 @@ async function contributeIn(contract,amount, contributerAddress, contributorPass
 
 module.exports = {
     loadContractAt,
-    getRaisedAmount
+    getRaisedAmount,
+    contributeIn,
 }
