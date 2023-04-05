@@ -48,6 +48,28 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
 
 })
 
+web3RouterFunding.post('/getApprovel', auth, async (req,res) => {
+    res.send('Hi')
+})
+
+web3RouterFunding.post('/contribute', auth, async (req,res) => {
+    
+    const {password, cid, amount} = req.body;
+    const {address} = await ContractModal.findById(cid);
+    const user = await User.findById(req.user._id)
+    info(user.walletAddress, address, amount, password);
+    try{
+        const contract = loadContractAt(address);
+        const txHash = await contributeIn(contract, user.walletAddress, amount, password);
+        res.json({txHash})
+    }
+    catch(error){
+        err(error)
+    }
+    
+    
+    res.send("hi there")
+})
 // web3RouterFunding.post('/deployContract',async (req,res) => {
 //     const data = req.body
 //     info(data)
