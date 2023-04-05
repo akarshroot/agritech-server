@@ -15,14 +15,21 @@ web3RouterFunding.get("/:id", async (req,res) => {
 })
 
 web3RouterFunding.post('/deployContract',async (req,res) => {
-    const testContractAddress = 'THIS IS A TEST CONTRACT ADDRESS'
+    // const testContractAddress = 'THIS IS A TEST CONTRACT ADDRESS'
     const data = req.body
     info(data)
     const manager = await User.findById(data.userId)
     info(manager)
+    const contract = await deployContract(
+        data.walletAddress,
+        data.password,
+        data.target,
+        data.deadline,
+        data.minContribution,
+    )
     const newContractModel = new Campaign({
         title:data.title,
-        address: testContractAddress,
+        address: contract._address,
         target: data.target,
         deadline: data.deadline,
         minContri: data.minContribution,
@@ -40,17 +47,18 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
     })
 
 })
+
 // web3RouterFunding.post('/deployContract',async (req,res) => {
 //     const data = req.body
 //     info(data)
 
-//     const address = await deployContract(
-//         data.walletAddress,
-//         data.password,
-//         data.target,
-//         data.deadline,
-//         data.minContribution,
-//     )
+    // const address = await deployContract(
+    //     data.walletAddress,
+    //     data.password,
+    //     data.target,
+    //     data.deadline,
+    //     data.minContribution,
+    // )
     
 //     if(address!=='Incorrect Password (Account not Unlocked)'){
 //         const newContractModel = new Campaign({

@@ -1,3 +1,5 @@
+const auth=require("../middleware/auth")
+const User=require("../models/User")
 const {info}=require("../utils/logger")
 const {getBalance, transferKCO}=require("../web3/web3Wallet")
 
@@ -10,7 +12,8 @@ web3Router.get("/getBalance/:id", async (req,res) => {
     res.status(200).send(resData)
 })
 
-web3Router.post("/transfer", async (req,res) => {
+web3Router.post("/transfer", auth,async (req,res) => {
+    const user = await User.findById(req.user._id);
     const data = req.body
     info(data)
     const txHash = await transferKCO(
@@ -19,6 +22,8 @@ web3Router.post("/transfer", async (req,res) => {
         data.amount,
         data.password
     )
+    user.transactions.push(txHash);
+    user.save();
 
     res.send({
         txHash

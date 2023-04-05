@@ -1,4 +1,3 @@
-const {info}=require("../../utils/logger")
 
 const FundingABI = [
 	{
