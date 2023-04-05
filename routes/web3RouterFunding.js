@@ -1,5 +1,5 @@
 const User=require("../models/User");
-const ContractModal=require("../models/contractsModel");
+const Campaign=require("../models/Campaign");
 const {info}=require("../utils/logger");
 const deployContract=require("../web3/deploy");
 const {loadContractAt, getRaisedAmount}=require("../web3/web3funding")
@@ -20,7 +20,7 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
     info(data)
     const manager = await User.findById(data.userId)
     info(manager)
-    const newContractModel = new ContractModal({
+    const newContractModel = new Campaign({
         title:data.title,
         address: testContractAddress,
         target: data.target,
@@ -53,7 +53,7 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
 //     )
     
 //     if(address!=='Incorrect Password (Account not Unlocked)'){
-//         const newContractModel = new ContractModal({
+//         const newContractModel = new Campaign({
 //             title:data.title,
 //             address: data.walletAddress,
 //             target: data.target,

@@ -5,6 +5,6 @@ const {info}=require("./utils/logger");
 
 const server = http.createServer(app);
 
-server.listen(process.env.PORT,()=>{
+server.listen(process.env.PORT,async ()=>{
     info("Server running on port:",process.env.PORT);
 })

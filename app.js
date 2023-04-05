@@ -10,10 +10,12 @@ const authRoutes = require("./routes/AuthRoutes")
 const userRoutes = require("./routes/UserRoutes")
 const refreshTokenRoute = require("./routes/refreshToken")
 const cookies = require("cookie-parser");
+const {setAddress}=require("./web3/contracts/ABIs");
 
 app.use(cookies());
 app.use(cors())
 app.use(express.json())
+
 
 mongoose.connect(`mongodb+srv://admin:${process.env.MONGO_PASS}@maincluster.yajbyem.mongodb.net/?retryWrites=true&w=majority`)
 
@@ -31,8 +33,11 @@ app.get('/', (req, res) => {
     info("Home")
     res.send("AfriTech Server")
 })
-app.use('/api/web3/wallet', web3Router)
-app.use('/api/web3/fundingContracts', web3RouterFunding)
+
+// setAddress().then(() => {
+    app.use('/api/web3/wallet', web3Router)
+    app.use('/api/web3/fundingContracts', web3RouterFunding)
+// })
 app.use("/api/auth", authRoutes)
 app.use("/api/refreshToken", refreshTokenRoute)
 app.use("/api/user", userRoutes)

@@ -1,3 +1,5 @@
+const {info}=require("../../utils/logger")
+
 const FundingABI = [
 	{
 		"inputs": [
@@ -472,11 +474,19 @@ const CoinsABI = [
 		"type": "function"
 	}
 ]
-// const Caddress = "0x1cE8c5Ccf95154C3B5A806f90392B62A1540052e"
-const Caddress = "0xEa290a8F4fFdf0ca97ccf721c16812F71f8Deffb"
+const Caddress = "0x1cE8c5Ccf95154C3B5A806f90392B62A1540052e"
+// let Caddress
+
+// async function setAddress(){
+// 	res = await fetch('https://asia-south1-kissanblockchain.cloudfunctions.net/cAddressFunction')
+// 	const {data} = await res.json()
+// 	Caddress = data;
+// 	info(Caddress);
+// }
 
 module.exports = {
 	FundingABI,
 	CoinsABI,
-	Caddress
+	Caddress,
+	// setAddress
 }
