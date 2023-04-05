@@ -2,7 +2,8 @@ const User=require("../models/User");
 const Campaign=require("../models/Campaign");
 const {info}=require("../utils/logger");
 const deployContract=require("../web3/deploy");
-const {loadContractAt, getRaisedAmount}=require("../web3/web3funding")
+const {loadContractAt, getRaisedAmount}=require("../web3/web3funding");
+const auth=require("../middleware/auth");
 
 const web3RouterFunding = require("express").Router()
 
@@ -55,7 +56,7 @@ web3RouterFunding.post('/getApprovel', auth, async (req,res) => {
 web3RouterFunding.post('/contribute', auth, async (req,res) => {
     
     const {password, cid, amount} = req.body;
-    const {address} = await ContractModal.findById(cid);
+    const {address} = await Campaign.findById(cid);
     const user = await User.findById(req.user._id)
     info(user.walletAddress, address, amount, password);
     try{
