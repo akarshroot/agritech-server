@@ -29,7 +29,7 @@ async function transferKCO(fromAddress,toAddress, amount, password){
 async function transferFromKCO(fromAddress,toAddress, amount, password){
 	const unlockedAcc = await web3.eth.personal.unlockAccount(fromAddress,password,300)
 	info(unlockedAcc)
-	showAllowance(fromAddress,toAddress)
+	showAllowance(fromAddress,toAddress, password)
 	if(unlockedAcc){
 		const res = await contract.methods.transferFrom(fromAddress,toAddress,Web3.utils.toWei((amount+''),"ether")).call()
 		const {transactionHash} = res
@@ -39,7 +39,7 @@ async function transferFromKCO(fromAddress,toAddress, amount, password){
 	return false
 }
 
-async function giveApproval(fromAddress,toAddress, password,amount){
+async function giveApproval(fromAddress,toAddress, amount,password){
 	const unlocked = await web3.eth.personal.unlockAccount(fromAddress,password,300)
 	info(unlocked)
 	if(unlocked){
@@ -51,7 +51,7 @@ async function giveApproval(fromAddress,toAddress, password,amount){
 		
 		
 		// const approvalRes = await contract.methods.approve(toAddress, Web3.utils.toWei((amount+''),"ether")).send({
-		const approvalRes = await contract.methods.approve(toAddress, amount).send({
+		const approvalRes = await contract.methods.approve(toAddress, Web3.utils.toWei((amount+''),"ether")).send({
 			from:fromAddress,
 			// gas: Web3.fromWei(10,'gwei')
 		})
@@ -62,7 +62,7 @@ async function giveApproval(fromAddress,toAddress, password,amount){
 	}
 }
 
-async function showAllowance(fromAddress,toAddress, password,amount){
+async function showAllowance(fromAddress,toAddress, password){
 	const unlocked = await web3.eth.personal.unlockAccount(fromAddress,password,300)
 	info(unlocked)
 	if(unlocked){

@@ -1,42 +1,30 @@
 const Web3 = require('web3')
 const web3 = require('./web3.js')
 const {FundingABI}=require('./contracts/ABIs.js')
-const {giveApproval}=require('./web3Wallet.js')
 const {info}=require("../utils/logger");
-
-/*
-
-the following data needs to be stored from front end
-
-deadline
-minContributiuon
-target
-
-*/
 
 function loadContractAt(address){
     const findcontract = new web3.eth.Contract(FundingABI,address)
-    info("contract at ->>",findcontract)
     return findcontract
 }
 
 async function getRaisedAmount(contract){
     if(contract){
-        const amount = await contract.methods.getRaisedAmount().call()
-        return amount
+        const amount = await contract.methods.GetContractTokenBalance().call()
+        return Web3.utils.fromWei(amount,"ether")
     }else{
         return 'No Contract selected'
     }
 }
 async function contributeIn(contract, contributerAddress, amount,contributorPassword){
 
-    const unlocked = await web3.eth.personal.unlockAccount(contributerAddress,contributorPassword,300)
+    const unlocked = await web3.eth.personal.unlockAccount(contributerAddress,contributorPassword,1000)
     // const approvalRes = await giveApproval()
+    info(unlocked)
     if(contract && unlocked){
-        const res = await contract.methods.contribute(amount).send({
+        const res = await contract.methods.contribute(Web3.utils.toWei((amount+''),"ether")).send({
             from:contributerAddress
         })
-        info(res)
         return res
 
     }else{
@@ -44,15 +32,57 @@ async function contributeIn(contract, contributerAddress, amount,contributorPass
     }
 }
 
-// contributeIn(
-//     loadContractAt('0x98CB0298e6eA6E446454576780A8a5d9013C5fb4'),
-//     103,
-//     '0x2ee4961905E3c9B6eC890d5F919224Ad6BD87637',
-//     'Iamjastagar1@mks'
-//     )
+
+// initiate VoteReq
+async function initateVoteReq(contract,fromAddress,toAddess,amount,password){
+    const Amount = Web3.utils.toWei((amount+''),'ether')
+    const unlocked = await web3.eth.personal.unlockAccount(fromAddress,password,1000)
+    info(unlocked)
+    if(contract && unlocked){
+        const response = await contract.methods.createRequest(reason,toAddess,Amount).send({
+            from:fromAddress
+        })
+        info("Vote Res->", response)
+        return response
+    }else{
+        return 'No Contract selected or password incorrect'
+    }
+}
+// vote in certain req
+async function voteInReq(contract,reqNumber,fromAddress,password){
+    const unlocked = await web3.eth.personal.unlockAccount(fromAddress,password,1000)
+    info(unlocked)
+    if(contract && unlocked){
+        const response = await contract.methods.voteRequest(reqNumber).send({
+            from:fromAddress
+        })
+        info("Voted->", response)
+        return response
+    }else{
+        return 'No Contract selected or password incorrect'
+    }
+    
+}
+// withdraw from activeRequest
+async function activeRequest(contract,fromAddress,reqNumber,password){
+    const unlocked = await web3.eth.personal.unlockAccount(fromAddress,password,1000)
+    info(unlocked)
+    if(contract && unlocked){
+        const response = await contract.methods.transferToBuy(reqNumber).send({
+            from:fromAddress
+        })
+        info("Status->",response)
+        return response
+    }else{
+        return 'No Contract selected or password incorrect'
+    }
+}
 
 module.exports = {
     loadContractAt,
     getRaisedAmount,
     contributeIn,
+    initateVoteReq,
+    voteInReq,
+    activeRequest,
 }

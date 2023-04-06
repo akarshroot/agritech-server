@@ -10,7 +10,14 @@ const contractSchema = new mongoose.Schema({
     manager:{
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'User'
-    }
+    },
+    voteRequests:[{
+        reason:String,
+        amount:Number,
+        reciver:String,
+        votes:Number,
+    }],
+    contributors:Number
 })
 
 const Campaign = mongoose.model('Campaign',contractSchema)
