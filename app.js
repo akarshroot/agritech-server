@@ -31,7 +31,7 @@ mongoose.connection.on('connected', function () {
 
 app.get('/', (req, res) => {
     info("Home")
-    res.send("AfriTech Server")
+    res.send("AgriTech Server")
 })
 
 // setAddress().then(() => {
