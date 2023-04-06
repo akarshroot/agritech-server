@@ -23,7 +23,7 @@ web3Router.post("/transfer", auth,async (req,res) => {
     )
     user.transactions.push(txHash);
     user.save();
-
+    
     res.send({
         txHash
     })
