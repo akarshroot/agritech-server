@@ -8,7 +8,6 @@ const web3Router = require("express").Router()
 web3Router.get("/getBalance/:id", async (req,res) => {
     const amount = await getBalance(req.params.id)
     const resData = {amount}
-    info(resData)
     res.status(200).send(resData)
 })
 

@@ -10,18 +10,16 @@ const web3RouterFunding = require("express").Router()
 
 web3RouterFunding.get("/:cid", async (req,res) => {
 
-    const {address,...contractraw} = await Campaign.findById(req.params.cid)
-    const contract = loadContractAt(address);
+    const contractraw = await Campaign.findById(req.params.cid).populate('manager')
+    const contract = loadContractAt(contractraw.address);
     const raisedAmount =await getRaisedAmount(contract);
     
     const dataToSend = {
         raisedAmount,
-        ...contractraw
+        ...contractraw._doc
     }
     
-    res.send({
-        raisedAmount
-    })
+    res.json(dataToSend)
 })
 
 web3RouterFunding.get("/raised/:cid",async (req,res) => {
@@ -108,6 +106,7 @@ web3RouterFunding.post('/contribute', auth, async (req,res) => {
     try{
         const contract = loadContractAt(address);
         const txHash = await contributeIn(contract, user.walletAddress, amount, password);
+        info("Contri Hash-->",txHash)
         res.json({txHash})
     }
     catch(error){
