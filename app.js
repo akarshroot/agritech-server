@@ -8,9 +8,10 @@ const app = express()
 const { info } = require("./utils/logger");
 const authRoutes = require("./routes/AuthRoutes")
 const userRoutes = require("./routes/UserRoutes")
+const storeRoutes = require("./routes/StoreRoutes")
 const refreshTokenRoute = require("./routes/refreshToken")
 const cookies = require("cookie-parser");
-const {setAddress}=require("./web3/contracts/ABIs");
+const { setAddress } = require("./web3/contracts/ABIs");
 
 app.use(cookies());
 app.use(cors())
@@ -35,12 +36,13 @@ app.get('/', (req, res) => {
 })
 
 // setAddress().then(() => {
-    app.use('/api/web3/wallet', web3Router)
-    app.use('/api/web3/fundingContracts', web3RouterFunding)
+app.use('/api/web3/wallet', web3Router)
+app.use('/api/web3/fundingContracts', web3RouterFunding)
 // })
 app.use("/api/auth", authRoutes)
 app.use("/api/refreshToken", refreshTokenRoute)
 app.use("/api/user", userRoutes)
+app.use("/api/store", storeRoutes)
 
 
 module.exports = app
