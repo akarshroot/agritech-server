@@ -17,7 +17,14 @@ const contractSchema = new mongoose.Schema({
         reciver:String,
         votes:Number,
     }],
-    contributors:Number
+    contributors:Number,
+    campaignTransactions:[{
+        to:String,
+        from:String,
+        amount:Number,
+        txHash:String,
+        approvalHash:String
+    }]
 })
 
 const Campaign = mongoose.model('Campaign',contractSchema)

@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
     ownedContracts:[
         {
             type: mongoose.SchemaTypes.ObjectId,
-            ref:'ContractMod'
+            ref:'Campaign'
         }
     ],
     createdAt: {
@@ -53,9 +53,12 @@ const userSchema = new mongoose.Schema({
         default: () => Date.now(),
         immutable: true
     },
-    transactions:{
-        type:String
-    }
+    transactions:[{
+        to:String,
+        from:String,
+        amount:Number,
+        txHash:String
+    }]
 });
 
 // Export the model
