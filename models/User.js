@@ -42,12 +42,6 @@ const userSchema = new mongoose.Schema({
             _id: false
         }
     ],
-    ownedContracts:[
-        {
-            type: mongoose.SchemaTypes.ObjectId,
-            ref:'Campaign'
-        }
-    ],
     createdAt: {
         type: Date,
         default: () => Date.now(),
@@ -57,7 +51,11 @@ const userSchema = new mongoose.Schema({
         to:String,
         from:String,
         amount:Number,
-        txHash:String
+        txHash:String,
+        date:{
+            type:Date,
+            default: new Date()
+        }
     }]
 });
 

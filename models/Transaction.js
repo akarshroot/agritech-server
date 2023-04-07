@@ -4,14 +4,20 @@ const mongoose = require('mongoose');
 const transactionSchema = new mongoose.Schema({
     senderId: {
         type: mongoose.Schema.Types.ObjectId,
+        ref:'User',
         required: true
     },
     receiverId: {
         type: mongoose.Schema.Types.ObjectId,
+        ref:'User',
         required: true
     },
     amount: {
         type: Number,
+        required: true
+    },
+    txHash: {
+        type: String,
         required: true
     },
     currency: {
