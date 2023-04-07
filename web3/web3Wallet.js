@@ -58,7 +58,7 @@ async function giveApproval(fromAddress,toAddress, amount,password){
 		info('Approval status',approvalRes)
 		return approvalRes
 	}else{
-		return 'Incorrect Password or account not correct'
+		return new Error('Incorrect Password or account not correct')
 	}
 }
 

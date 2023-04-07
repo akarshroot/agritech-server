@@ -1,50 +1,57 @@
-const User=require("../models/User");
-const Campaign=require("../models/Campaign");
-const {info,err}=require("../utils/logger");
-const deployContract=require("../web3/deploy");
-const {loadContractAt, getRaisedAmount, contributeIn}=require("../web3/web3funding");
-const auth=require("../middleware/auth");
-const {giveApproval}=require("../web3/web3Wallet");
+const User = require("../models/User");
+const Campaign = require("../models/Campaign");
+const { info, err } = require("../utils/logger");
+const deployContract = require("../web3/deploy");
+const { loadContractAt, getRaisedAmount, contributeIn } = require("../web3/web3funding");
+const auth = require("../middleware/auth");
+const { giveApproval } = require("../web3/web3Wallet");
 
 const web3RouterFunding = require("express").Router()
 
-web3RouterFunding.get("/:cid", async (req,res) => {
+web3RouterFunding.get("/:cid", async (req, res) => {
+    try {
+        const contractraw = await Campaign.findById(req.params.cid).populate('manager')
+        const contract = loadContractAt(contractraw.address);
+        const raisedAmount = await getRaisedAmount(contract);
 
-    const contractraw = await Campaign.findById(req.params.cid).populate('manager')
-    const contract = loadContractAt(contractraw.address);
-    const raisedAmount =await getRaisedAmount(contract);
-    
-    const dataToSend = {
-        raisedAmount,
-        ...contractraw._doc
+        const dataToSend = {
+            raisedAmount,
+            ...contractraw._doc
+        }
+        res.status(200).json(dataToSend)
+    } catch (error) {
+        res.status(500).json({ error: true, message: error.message })
     }
-    
-    res.json(dataToSend)
 })
 
-web3RouterFunding.get("/raised/:cid",async (req,res) => {
+web3RouterFunding.get("/raised/:cid", async (req, res) => {
+    try {
+        const { address } = await Campaign.findById(req.params.cid)
+        const contract = loadContractAt(address);
+        const raisedAmount = await getRaisedAmount(contract);
 
-    const {address} = await Campaign.findById(req.params.cid)
-    const contract = loadContractAt(address);
-    const raisedAmount =await getRaisedAmount(contract);
-    
-    res.json({
-        raisedAmount
-    })
+        res.status(200).json({
+            raisedAmount
+        })
+    } catch (error) {
+        err(error)
+        res.status(500).json({ error: true, message: error.message })
+    }
 })
 
-web3RouterFunding.get('/', auth, async (req,res) => {
-    try{
+web3RouterFunding.get('/', auth, async (req, res) => {
+    try {
         const allContracts = await Campaign.find({})
-        res.json(allContracts)
-    }catch(err){
+        res.status(200).json(allContracts)
+    } catch (err) {
         err(err)
+        res.status(500).json({ error: true, message: err.message })
     }
 })
 
-web3RouterFunding.post('/deployContract',async (req,res) => {
+web3RouterFunding.post('/deployContract', async (req, res) => {
     // const testContractAddress = 'THIS IS A TEST CONTRACT ADDRESS'
-    try{
+    try {
         const data = req.body
         info(data)
         const manager = await User.findById(data.userId)
@@ -57,8 +64,8 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
             data.minContribution,
         )
         const newContractModel = new Campaign({
-            title:data.title,
-            address:contract._address,
+            title: data.title,
+            address: contract._address,
             target: data.target,
             deadline: data.deadline,
             minContri: data.minContribution,
@@ -70,51 +77,50 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
         manager.ownedContracts.push(saved._id.toString())
         await manager.save()
         // info(address._address)
-        res.json({
-            status:"Deployed Successfully",
+        res.status(200).json({
+            status: "Deployed Successfully",
             // address:address._address
         })
-    }catch(error){
+    } catch (error) {
         err(error)
-        res.send(error)
+        res.status(500).json({ error: true, message: error.message })
     }
 
 })
 
-web3RouterFunding.post('/getApproval', auth, async (req,res) => {
-    const incommingData = req.body;
-    const user = await User.findById(req.user._id);
-    const contractFound = await Campaign.findById(incommingData.cid)
+web3RouterFunding.post('/getApproval', auth, async (req, res) => {
     // info(user.walletAddress,contract.address,incommingData.amount,incommingData.password)
-    try{
-        await giveApproval(user.walletAddress,contractFound.address,incommingData.amount,incommingData.password)
+    try {
+        const incommingData = req.body;
+        const user = await User.findById(req.user._id);
+        const contractFound = await Campaign.findById(incommingData.cid)
+        await giveApproval(user.walletAddress, contractFound.address, incommingData.amount, incommingData.password)
         const contract = loadContractAt(contractFound.address);
         const txHash = await contributeIn(contract, user.walletAddress, incommingData.amount, incommingData.password);
-        res.json({txHash})
-    }catch(error){
+        res.status(200).json({ txHash })
+    } catch (error) {
         err(error.message)
-        res.send(error.message)
+        res.status(500).json({ error: true, message: error.message })
     }
 })
 
-web3RouterFunding.post('/contribute', auth, async (req,res) => {
-    
-    const {password, cid, amount} = req.body;
-    const {address} = await Campaign.findById(cid);
-    const user = await User.findById(req.user._id)
+web3RouterFunding.post('/contribute', auth, async (req, res) => {
+
     // info(user.walletAddress, address, amount, password);
-    try{
+    try {
+        const { password, cid, amount } = req.body;
+        const { address } = await Campaign.findById(cid);
+        const user = await User.findById(req.user._id)
         const contract = loadContractAt(address);
         const txHash = await contributeIn(contract, user.walletAddress, amount, password);
-        info("Contri Hash-->",txHash)
-        res.json({txHash})
+        info("Contri Hash-->", txHash)
+        res.status(200).json({ txHash })
     }
-    catch(error){
+    catch (error) {
         err(error.message)
+        res.status(500).json({ error: true, message: error.message })
     }
-    
-    
-    res.send("hi there")
+    // res.send("hi there")
 })
 
 
