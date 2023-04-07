@@ -19,6 +19,9 @@ const transactionSchema = new mongoose.Schema({
         default: "KCO",
         required: true
     },
+    purpose: {
+        type: String,
+    },
     createdAt: {
         type: Date,
         default: () => Date.now(),
