@@ -77,7 +77,7 @@ const FundingABI = [
 			},
 			{
 				"internalType": "address",
-				"name": "reciver",
+				"name": "receiver",
 				"type": "address"
 			},
 			{
@@ -146,7 +146,7 @@ const FundingABI = [
 			},
 			{
 				"internalType": "address",
-				"name": "_reciver",
+				"name": "_receiver",
 				"type": "address"
 			},
 			{

@@ -14,7 +14,7 @@ const contractSchema = new mongoose.Schema({
     voteRequests:[{
         reason:String,
         amount:Number,
-        reciver:String,
+        receiver:String,
         votes:Number,
         voteNumber:Number
     }],

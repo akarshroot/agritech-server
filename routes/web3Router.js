@@ -15,8 +15,8 @@ web3Router.get("/getBalance/:id", async (req,res) => {
 web3Router.post("/transfer", auth,async (req,res) => {
     const user = await User.findById(req.user._id);
     const data = req.body
-    const reciver = await User.findOne({walletAddress: data.addressTo})
-    info("reciver",reciver)
+    const receiver = await User.findOne({walletAddress: data.addressTo})
+    info("receiver",receiver)
     info(data)
     try{
         const txHash = await transferKCO(
@@ -27,15 +27,15 @@ web3Router.post("/transfer", auth,async (req,res) => {
         )
         const tx = new Transaction({
             senderId: user._id,
-            reciverId: reciver._id,
+            receiverId: receiver._id,
             amount:data.amount,
             txHash:txHash.transactionHash
         })
         const savedTx = await tx.save();
         user.transactions.push(savedTx._id);
-        reciver.transactions.push(savedTx._id);
+        receiver.transactions.push(savedTx._id);
         await user.save();
-        await reciver.save();
+        await receiver.save();
         res.json({
             status:'success',
             message:'Transfer Complete'

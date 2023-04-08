@@ -5,6 +5,7 @@ const deployContract = require("../web3/deploy");
 const { loadContractAt, getRaisedAmount, contributeIn } = require("../web3/web3funding");
 const auth = require("../middleware/auth");
 const { giveApproval } = require("../web3/web3Wallet");
+const ContributionTx=require("../models/ContributionTx");
 
 const web3RouterFunding = require("express").Router()
 
@@ -87,36 +88,39 @@ web3RouterFunding.post('/getApproval', auth, async (req,res) => {
     const incommingData = req.body;
     const user = await User.findById(req.user._id);
     const contractFound = await Campaign.findById(incommingData.cid)
-    // info(user.walletAddress,contract.address,incommingData.amount,incommingData.password)
     try{
         await giveApproval(user.walletAddress,contractFound.address,incommingData.amount,incommingData.password)
         const contract = loadContractAt(contractFound.address);
         const txHash = await contributeIn(contract, user.walletAddress, incommingData.amount, incommingData.password);
-        res.json({txHash})
+        const tx = new ContributionTx({
+            senderId: user._id,
+            receiverId: contractFound._id,
+            amount:incommingData.amount,
+            txHash:txHash.transactionHash
+        })
+        await tx.save()
+        const condition = contractFound.contributors.find(e => e.userId===user._id? true:false)
+        if(!condition){
+            const newContributor = {
+                userId:user._id,
+                deniedRequests:[]
+            }
+            contractFound.contributors.push(newContributor)
+            await contractFound.save()
+        }
+        user.transactions.push(tx._id)
+        await user.save()
+        res.json({
+            status:"Success",
+            message:"Contibuted successfully"
+        })
     }catch(error){
         err(error.message)
-        res.status(500).json({ error: true, message: error.message })
+        res.status(500).json({ 
+            status:'Failed To Contribute',
+            error: true,
+            message: error.message })
     }
-})
-
-web3RouterFunding.post('/contribute', auth, async (req,res) => {
-    
-    const {password, cid, amount} = req.body;
-    const {address} = await Campaign.findById(cid);
-    const user = await User.findById(req.user._id)
-    // info(user.walletAddress, address, amount, password);
-    try{
-        const contract = loadContractAt(address);
-        const txHash = await contributeIn(contract, user.walletAddress, amount, password);
-        info("Contri Hash-->",txHash)
-        res.json({txHash})
-    }
-    catch(error){
-        err(error.message)
-    }
-    
-    
-    res.send("hi there")
 })
 
 

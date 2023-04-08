@@ -1,7 +1,7 @@
 // user.model.js
 const mongoose = require('mongoose');
 // Declare the Schema of the Mongo model
-const transactionSchema = new mongoose.Schema({
+const contributionTxSchema = new mongoose.Schema({
     senderId: {
         type: mongoose.Schema.Types.ObjectId,
         ref:'User',
@@ -9,7 +9,7 @@ const transactionSchema = new mongoose.Schema({
     },
     receiverId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:'User',
+        ref:'Campaign',
         required: true
     },
     amount: {
@@ -18,6 +18,11 @@ const transactionSchema = new mongoose.Schema({
     },
     txHash: {
         type: String,
+        required: true
+    },
+    currency: {
+        type: String,
+        default: "KCO",
         required: true
     },
     createdAt: {
@@ -29,6 +34,6 @@ const transactionSchema = new mongoose.Schema({
 
 // Export the model
 
-const Transaction = mongoose.model("Transaction", transactionSchema);
+const ContributionTx = mongoose.model("ContributionTx", contributionTxSchema);
 
-module.exports = Transaction;
+module.exports = ContributionTx;

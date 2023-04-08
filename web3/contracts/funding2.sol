@@ -16,7 +16,7 @@ contract kissanFundContract{
 
     struct Request {
         string reason;
-        address reciver;
+        address receiver;
         uint amount;
         bool completed;
         mapping(address => bool) voters;
@@ -67,11 +67,11 @@ contract kissanFundContract{
 
 
 
-    function createRequest(string memory _reason, address _reciver, uint _amount) public OnlyOwner {
+    function createRequest(string memory _reason, address _receiver, uint _amount) public OnlyOwner {
         Request storage newReq = allRequests[numberOfRequests++];
         newReq.reason = _reason;
         newReq.amount = _amount;
-        newReq.reciver = _reciver;
+        newReq.receiver = _receiver;
         newReq.numberOfVoters = 0;
     }
     function voteRequest(uint _reqNumber) public {
@@ -85,7 +85,7 @@ contract kissanFundContract{
         Request storage thisRequest = allRequests[_reqNumber];
         require(thisRequest.numberOfVoters >= (noOfContributors/2), "50% or more Votes are not met (Insufficient Votes)");
 
-        token.transfer(thisRequest.reciver,thisRequest.amount);
+        token.transfer(thisRequest.receiver,thisRequest.amount);
         thisRequest.completed = true;
         return true;
     }

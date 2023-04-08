@@ -10,43 +10,43 @@ const web3RouterVoting = require('express').Router()
 /*
     reason:reason.value,
     password:password.value,
-    reciverProduct:reciverId,
+    receiverProduct:receiverId,
     amount: amount.value? amount.value:'GetFromProduct'
 */
 
 web3RouterVoting.post('/makeRequest',auth, async (req,res) => {
     
-    const {reason,reciverProduct,amount,campaignId,password} = req.body
+    const {reason,receiverProduct,amount,campaignId,password} = req.body
     const campaignData = await Campaign.findById(campaignId);
     const user = await User.findById(req.user._id);
     let dataFormed;
     if(amount === 'GetFromProduct'){
-        const product = await Product.findById(reciverProduct)
+        const product = await Product.findById(receiverProduct)
         const reqAmount = product.price
-        let finalReciver;
+        let finalreceiver;
         const ProductOwner = await User.findById(product.soldBy)
-        finalReciver = ProductOwner.walletAddress
+        finalreceiver = ProductOwner.walletAddress
         dataFormed = {
             reason,
-            reciver:finalReciver,
+            receiver:finalreceiver,
             amount:reqAmount
         }
     }else{
         dataFormed = {
             reason,
-            reciver:user.walletAddress,
+            receiver:user.walletAddress,
             amount,
         }
     }
     try{
         const contract = loadContractAt(campaignData.address);
-        info(dataFormed.reciver)
-        const response = await initateVoteReq(contract,user.walletAddress,dataFormed.reciver,dataFormed.amount,dataFormed.reason,password)
+        info(dataFormed.receiver)
+        const response = await initateVoteReq(contract,user.walletAddress,dataFormed.receiver,dataFormed.amount,dataFormed.reason,password)
         const voteNumberBylen = campaignData.voteRequests.length
         const voteData = {
             reason,
             amount:dataFormed.amount,
-            reciver:dataFormed.reciver,
+            receiver:dataFormed.receiver,
             votes:0,
             voteNumber: voteNumberBylen+1
         }
@@ -103,6 +103,7 @@ web3RouterVoting.post("/useRequestedMoney",auth,async (req,res) => {
     try{
         const contract = loadContractAt(campaignData.address)
         const response = await activateRequest(contract, user.walletAddress, voteNumber,password)
+
         info(response)
         res.json({
             status:"Success",
