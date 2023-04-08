@@ -6,7 +6,10 @@ const contractSchema = new mongoose.Schema({
     target:Number,
     deadline:Number,
     minContri:Number,
-    dateCreated:Date,
+    dateCreated:{
+        type: Date,
+        default: ()=> Date.now()
+    },
     manager:{
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'User'
