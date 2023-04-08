@@ -83,9 +83,10 @@ contract kissanFundContract{
     }
     function transferToBuy(uint _reqNumber) public OnlyOwner returns(bool){
         Request storage thisRequest = allRequests[_reqNumber];
-        require(thisRequest.numberOfVoters >= (noOfContributors/2), "50% or more Votes are not avaible (Insufficient Votes)");
+        require(thisRequest.numberOfVoters >= (noOfContributors/2), "50% or more Votes are not met (Insufficient Votes)");
 
         token.transfer(thisRequest.reciver,thisRequest.amount);
+        thisRequest.completed = true;
         return true;
     }
 

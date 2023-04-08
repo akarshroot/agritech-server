@@ -50,7 +50,6 @@ web3RouterFunding.get('/', auth, async (req, res) => {
 })
 
 web3RouterFunding.post('/deployContract',async (req,res) => {
-    // const testContractAddress = 'THIS IS A TEST CONTRACT ADDRESS'
     try{
         const data = req.body
         info(data)
@@ -74,12 +73,8 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
         })
         const saved = await newContractModel.save()
         info(saved)
-        manager.ownedContracts.push(saved._id)
-        await manager.save()
-        // info(address._address)
         res.status(200).json({
             status: "Deployed Successfully",
-            // address:address._address
         })
     } catch (error) {
         err(error)

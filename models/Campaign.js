@@ -16,8 +16,17 @@ const contractSchema = new mongoose.Schema({
         amount:Number,
         reciver:String,
         votes:Number,
+        voteNumber:Number
     }],
-    contributors:Number,
+    contributors:[
+        {
+            userId:{
+                type:mongoose.SchemaTypes.ObjectId,
+                ref:'User'
+            },
+            deniedRequests:[Number]
+        }
+    ],
     campaignTransactions:[{
         to:String,
         from:String,

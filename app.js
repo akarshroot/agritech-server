@@ -12,6 +12,7 @@ const storeRoutes = require("./routes/StoreRoutes")
 const refreshTokenRoute = require("./routes/refreshToken")
 const cookies = require("cookie-parser");
 const { setAddress } = require("./web3/contracts/ABIs");
+const web3RouterVoting=require("./routes/web3RouterVoting");
 
 app.use(cookies());
 app.use(cors())
@@ -38,6 +39,7 @@ app.get('/', (req, res) => {
 // setAddress().then(() => {
 app.use('/api/web3/wallet', web3Router)
 app.use('/api/web3/fundingContracts', web3RouterFunding)
+app.use('/api/web3/votingContracts', web3RouterVoting)
 // })
 app.use("/api/auth", authRoutes)
 app.use("/api/refreshToken", refreshTokenRoute)

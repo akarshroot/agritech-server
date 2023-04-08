@@ -22,25 +22,6 @@ const FundingABI = [
 		"type": "constructor"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_tokenamount",
-				"type": "uint256"
-			}
-		],
-		"name": "Approvetokens",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "GetAllowance",
 		"outputs": [
@@ -83,6 +64,45 @@ const FundingABI = [
 		"inputs": [
 			{
 				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "allRequests",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "reason",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "reciver",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "completed",
+				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "numberOfVoters",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
 				"name": "_tokenamount",
 				"type": "uint256"
 			}
@@ -115,6 +135,29 @@ const FundingABI = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_reason",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_reciver",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "createRequest",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -193,6 +236,38 @@ const FundingABI = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_reqNumber",
+				"type": "uint256"
+			}
+		],
+		"name": "transferToBuy",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_reqNumber",
+				"type": "uint256"
+			}
+		],
+		"name": "voteRequest",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
