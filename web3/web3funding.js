@@ -34,7 +34,7 @@ async function contributeIn(contract, contributerAddress, amount,contributorPass
 
 
 // initiate VoteReq
-async function initateVoteReq(contract,fromAddress,toAddess,amount,password){
+async function initateVoteReq(contract,fromAddress,toAddess,amount,reason,password){
     const Amount = Web3.utils.toWei((amount+''),'ether')
     const unlocked = await web3.eth.personal.unlockAccount(fromAddress,password,1000)
     info(unlocked)
@@ -64,11 +64,11 @@ async function voteInReq(contract,reqNumber,fromAddress,password){
     
 }
 // withdraw from activeRequest
-async function activeRequest(contract,fromAddress,reqNumber,password){
+async function activateRequest(contract,fromAddress,reqNumber,password){
     const unlocked = await web3.eth.personal.unlockAccount(fromAddress,password,1000)
     info(unlocked)
     if(contract && unlocked){
-        const response = await contract.methods.transferToBuy(reqNumber).send({
+        const response = await contract.methods.transferToBuy(parseInt(reqNumber)-1).send({
             from:fromAddress
         })
         info("Status->",response)
@@ -84,5 +84,5 @@ module.exports = {
     contributeIn,
     initateVoteReq,
     voteInReq,
-    activeRequest,
+    activateRequest,
 }

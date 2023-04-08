@@ -10,8 +10,8 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     soldBy: {
-        type: String,
-        default: "AgriTech"
+        type: mongoose.SchemaTypes.ObjectId,
+        ref:"User"
     },
     price: {
         type: Number,

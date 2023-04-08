@@ -48,14 +48,8 @@ const userSchema = new mongoose.Schema({
         immutable: true
     },
     transactions:[{
-        to:String,
-        from:String,
-        amount:Number,
-        txHash:String,
-        date:{
-            type:Date,
-            default: new Date()
-        }
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Transaction'
     }]
 });
 
