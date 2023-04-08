@@ -19,4 +19,16 @@ router.get("/products/all", async (req, res) => {
     }
 });
 
+router.get("/products/:id", async (req, res) => {
+    try {
+        const prodId = req.params.id
+
+        const product = await Product.findOne({_id: prodId})
+
+        res.status(200).json({ error: false, data: product })
+    } catch (e) {
+        err(e)
+        res.status(500).send()
+    }
+});
 module.exports = router;
