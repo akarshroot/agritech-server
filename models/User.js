@@ -47,10 +47,16 @@ const userSchema = new mongoose.Schema({
         default: () => Date.now(),
         immutable: true
     },
-    transactions:[{
+    transactions: [{
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Transaction'
-    }]
+    }],
+    cart: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product'
+        }
+    ]
 });
 
 // Export the model
