@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema({
     },
     soldBy: {
         type: mongoose.SchemaTypes.ObjectId,
-        ref:"User"
+        ref: "User"
     },
     price: {
         type: Number,
@@ -21,10 +21,14 @@ const productSchema = new mongoose.Schema({
     imgUrl: {
         type: String,
     },
-    category: {
-        type: String,
-        required: true
-    },
+    category: [
+        {
+            type: String,
+            required: true,
+            default: "all",
+            _id: false
+        }
+    ],
     rating: {
         type: Number,
         default: 0,
@@ -34,6 +38,9 @@ const productSchema = new mongoose.Schema({
     description: {
         type: String,
         default: "No description added."
+    },
+    quantity: {
+        type: String
     }
 })
 
