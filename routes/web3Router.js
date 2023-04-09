@@ -16,8 +16,6 @@ web3Router.post("/transfer", auth,async (req,res) => {
     const user = await User.findById(req.user._id);
     const data = req.body
     const receiver = await User.findOne({walletAddress: data.addressTo})
-    info("receiver",receiver)
-    info(data)
     try{
         const txHash = await transferKCO(
             data.addressFrom,
@@ -47,4 +45,13 @@ web3Router.post("/transfer", auth,async (req,res) => {
         })
     }
 })
+
+web3Router.get("/transactions",auth,async (req,res) => {
+    const user = await User.findById(req.user._id).populate(['transactions','contributions']);
+    res.json({
+        wallet:user.transactions,
+        camps:user.contributions
+    })
+})
+
 module.exports = web3Router

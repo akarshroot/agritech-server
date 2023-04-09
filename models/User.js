@@ -51,6 +51,10 @@ const userSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Transaction'
     }],
+    contributions: [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'ContributionTx'
+    }],
     cart: [
         {
             type: mongoose.Schema.Types.ObjectId,

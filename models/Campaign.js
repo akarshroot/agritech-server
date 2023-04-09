@@ -31,11 +31,8 @@ const contractSchema = new mongoose.Schema({
         }
     ],
     campaignTransactions:[{
-        to:String,
-        from:String,
-        amount:Number,
-        txHash:String,
-        approvalHash:String
+        type:mongoose.SchemaTypes.ObjectId,
+        ref:"Transaction"
     }]
 })
 

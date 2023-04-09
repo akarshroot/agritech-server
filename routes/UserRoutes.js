@@ -99,4 +99,5 @@ router.delete("/cart/:id", auth, async (req, res) => {
         res.status(500).json({ error: true, message: "Internal Server Error" })
     }
 })
+
 module.exports = router
