@@ -9,6 +9,7 @@ const { info } = require("./utils/logger");
 const authRoutes = require("./routes/AuthRoutes")
 const userRoutes = require("./routes/UserRoutes")
 const storeRoutes = require("./routes/StoreRoutes")
+const walletRoutes = require("./routes/WalletRoutes")
 const refreshTokenRoute = require("./routes/refreshToken")
 const cookies = require("cookie-parser");
 const { setAddress } = require("./web3/contracts/ABIs");
@@ -45,6 +46,7 @@ app.use("/api/auth", authRoutes)
 app.use("/api/refreshToken", refreshTokenRoute)
 app.use("/api/user", userRoutes)
 app.use("/api/store", storeRoutes)
+app.use("/api/wallet/", walletRoutes)
 
 
 module.exports = app
