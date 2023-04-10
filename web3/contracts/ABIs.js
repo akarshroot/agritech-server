@@ -456,6 +456,30 @@ const CoinsABI = [
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "_reciver",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "withDrawTokens",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "owner",
 				"type": "address"
 			},
@@ -548,7 +572,8 @@ const CoinsABI = [
 		"type": "function"
 	}
 ]
-const Caddress = "0x1cE8c5Ccf95154C3B5A806f90392B62A1540052e"
+const Caddress = "0xA9A470ad353967297F48A95D745390dECC53Ec35"
+const coinsOwnerAccount = '0x2ee4961905E3c9B6eC890d5F919224Ad6BD87637'
 // let Caddress
 
 // async function setAddress(){
@@ -562,5 +587,6 @@ module.exports = {
 	FundingABI,
 	CoinsABI,
 	Caddress,
+	coinsOwnerAccount
 	// setAddress
 }
