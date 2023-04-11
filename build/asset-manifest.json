@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.03efee28.css",
+    "main.js": "/static/js/main.10c73590.js",
+    "static/media/tractors.jpg": "/static/media/tractors.215274e85efb7994cf0c.jpg",
+    "static/media/vegetables.jpg": "/static/media/vegetables.98c6695aa432b7e995ca.jpg",
+    "static/media/tractor-on-farmland.jpg": "/static/media/tractor-on-farmland.d49565dc351563cd5189.jpg",
+    "static/media/plantation.jpg": "/static/media/plantation.3f1517b6f9cb288374c4.jpg",
+    "static/media/grain.png": "/static/media/grain.3e6946ff43bbea6184d6.png",
+    "static/media/sales.png": "/static/media/sales.7c59007ec36e0be8b9d4.png",
+    "static/media/produce.png": "/static/media/produce.8344dffb105908792427.png",
+    "static/media/procurement.png": "/static/media/procurement.8f14b895c2f2a3b25e86.png",
+    "static/media/stacked-peaks.svg": "/static/media/stacked-peaks.088de919435f5ef7289a.svg",
+    "static/media/hamburger-menu.svg": "/static/media/hamburger-menu.9fab1f7b97e9d54546d831b98998d25f.svg",
+    "static/media/hamburger-menu-dark.svg": "/static/media/hamburger-menu-dark.8c6816fc70540504403f55fbd839e459.svg",
+    "index.html": "/index.html",
+    "static/media/shopping_cart.svg": "/static/media/shopping_cart.e574678566198c80e15ac7adeb48f1c3.svg",
+    "main.03efee28.css.map": "/static/css/main.03efee28.css.map",
+    "main.10c73590.js.map": "/static/js/main.10c73590.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.03efee28.css",
+    "static/js/main.10c73590.js"
+  ]
+}
