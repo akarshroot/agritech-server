@@ -16,7 +16,9 @@ async function transferKCO(fromAddress,toAddress, amount, password){
 	const unlockedAcc = await web3.eth.personal.unlockAccount(fromAddress,password,300)
 	info(unlockedAcc)
 	if(unlockedAcc){
-		const res = await contract.methods.transfer(toAddress,Web3.utils.toWei((amount+''),"ether")).send({
+
+		info(contract.methods.transfer(toAddress,Web3.utils.toWei((amount+''),"ether")))
+		const res = await contract.methods.transfer(toAddress,Web3.utils.toWei((amount+''),"ether")).buildTransaction({
 			from:fromAddress
 		})
 		const {transactionHash} = res
