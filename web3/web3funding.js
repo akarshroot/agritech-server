@@ -1,4 +1,3 @@
-const Web3 = require('web3')
 const web3 = require('./web3.js')
 const {FundingABI}=require('./contracts/ABIs.js')
 const {info}=require("../utils/logger");
@@ -11,7 +10,7 @@ function loadContractAt(address){
 async function getRaisedAmount(contract){
     if(contract){
         const amount = await contract.methods.GetContractTokenBalance().call()
-        return Web3.utils.fromWei(amount,"ether")
+        return amount
     }else{
         return 'No Contract selected'
     }
@@ -22,7 +21,7 @@ async function contributeIn(contract, contributerAddress, amount,contributorPass
     // const approvalRes = await giveApproval()
     info(unlocked)
     if(contract && unlocked){
-        const res = await contract.methods.contribute(Web3.utils.toWei((amount+''),"ether")).send({
+        const res = await contract.methods.contribute(amount).send({
             from:contributerAddress
         })
         return res
@@ -35,7 +34,7 @@ async function contributeIn(contract, contributerAddress, amount,contributorPass
 
 // initiate VoteReq
 async function initateVoteReq(contract,fromAddress,toAddess,amount,reason,password){
-    const Amount = Web3.utils.toWei((amount+''),'ether')
+    const Amount = amount
     const unlocked = await web3.eth.personal.unlockAccount(fromAddress,password,1000)
     info(unlocked)
     if(contract && unlocked){

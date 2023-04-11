@@ -1,17 +1,17 @@
 const User = require("../models/User");
 const Campaign = require("../models/Campaign");
+const ContributionTx=require("../models/ContributionTx");
 const { info, err } = require("../utils/logger");
 const deployContract = require("../web3/deploy");
 const { loadContractAt, getRaisedAmount, contributeIn } = require("../web3/web3funding");
 const auth = require("../middleware/auth");
 const { giveApproval } = require("../web3/web3Wallet");
-const ContributionTx=require("../models/ContributionTx");
 
 const web3RouterFunding = require("express").Router()
 
 web3RouterFunding.get("/:cid", async (req, res) => {
     try {
-        const contractraw = await Campaign.findById(req.params.cid).populate('manager')
+        const contractraw = await Campaign.findById(req.params.cid).populate(['manager','campaignTransactions'])
         const contract = loadContractAt(contractraw.address);
         const raisedAmount = await getRaisedAmount(contract);
 
@@ -53,9 +53,7 @@ web3RouterFunding.get('/', auth, async (req, res) => {
 web3RouterFunding.post('/deployContract',async (req,res) => {
     try{
         const data = req.body
-        info(data)
         const manager = await User.findById(data.userId)
-        info(manager)
         const contract = await deployContract(
             data.walletAddress,
             data.password,
@@ -73,7 +71,6 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
             manager: manager._id
         })
         const saved = await newContractModel.save()
-        info(saved)
         res.status(200).json({
             status: "Deployed Successfully",
         })
@@ -99,8 +96,8 @@ web3RouterFunding.post('/getApproval', auth, async (req,res) => {
             txHash:txHash.transactionHash
         })
         await tx.save()
-        const condition = contractFound.contributors.find(e => e.userId===user._id? true:false)
-        if(!condition){
+        const existingUser = contractFound.contributors.find(e => e.userId.toString()===user._id.toString())
+        if(!existingUser){
             const newContributor = {
                 userId:user._id,
                 deniedRequests:[]
@@ -108,7 +105,7 @@ web3RouterFunding.post('/getApproval', auth, async (req,res) => {
             contractFound.contributors.push(newContributor)
             await contractFound.save()
         }
-        user.transactions.push(tx._id)
+        user.contributions.push(tx._id)
         await user.save()
         res.json({
             status:"Success",
@@ -122,6 +119,5 @@ web3RouterFunding.post('/getApproval', auth, async (req,res) => {
             message: error.message })
     }
 })
-
 
 module.exports = web3RouterFunding

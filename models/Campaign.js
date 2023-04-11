@@ -6,7 +6,10 @@ const contractSchema = new mongoose.Schema({
     target:Number,
     deadline:Number,
     minContri:Number,
-    dateCreated:Date,
+    dateCreated:{
+        type: Date,
+        default: ()=> Date.now()
+    },
     manager:{
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'User'
@@ -28,11 +31,8 @@ const contractSchema = new mongoose.Schema({
         }
     ],
     campaignTransactions:[{
-        to:String,
-        from:String,
-        amount:Number,
-        txHash:String,
-        approvalHash:String
+        type:mongoose.SchemaTypes.ObjectId,
+        ref:"Transaction"
     }]
 })
 

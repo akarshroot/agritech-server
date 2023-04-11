@@ -2,6 +2,7 @@ const auth=require('../middleware/auth')
 const Campaign=require('../models/Campaign')
 const Product=require('../models/Product')
 const User=require('../models/User')
+const Transaction=require('../models/Transaction')
 const {err, info}=require('../utils/logger')
 const {initateVoteReq, loadContractAt, voteInReq, activateRequest}=require('../web3/web3funding')
 
@@ -20,33 +21,35 @@ web3RouterVoting.post('/makeRequest',auth, async (req,res) => {
     const campaignData = await Campaign.findById(campaignId);
     const user = await User.findById(req.user._id);
     let dataFormed;
+    let product;
     if(amount === 'GetFromProduct'){
-        const product = await Product.findById(receiverProduct)
+        product = await Product.findById(receiverProduct)
         const reqAmount = product.price
-        let finalreceiver;
-        const ProductOwner = await User.findById(product.soldBy)
-        finalreceiver = ProductOwner.walletAddress
+        const finalreceiver= '0x5c5e8d4372c726e3643fe2bb9c6c643c9fcff6f6';
+        // const ProductOwner = await User.findById(product.soldBy)    //its sold by AgriTech for now
         dataFormed = {
             reason,
             receiver:finalreceiver,
-            amount:reqAmount
+            amount:reqAmount,
+            product
         }
     }else{
         dataFormed = {
             reason,
             receiver:user.walletAddress,
             amount,
+            product
         }
     }
     try{
         const contract = loadContractAt(campaignData.address);
-        info(dataFormed.receiver)
         const response = await initateVoteReq(contract,user.walletAddress,dataFormed.receiver,dataFormed.amount,dataFormed.reason,password)
+        
         const voteNumberBylen = campaignData.voteRequests.length
         const voteData = {
             reason,
             amount:dataFormed.amount,
-            receiver:dataFormed.receiver,
+            receiver: product? product._id:user._id,
             votes:0,
             voteNumber: voteNumberBylen+1
         }
@@ -70,9 +73,9 @@ web3RouterVoting.post('/vote',auth,async (req, res) => {
     const user = await User.findById(req.user._id)
     const campaignDetails = await Campaign.findById(cid)
     const contract = loadContractAt(campaignDetails.address);
-    info(req.body)
-    if(vote!=='allow'){
-        // code to already voted
+    if(vote==='dontAllow'){
+        campaignDetails.contributors[user._id].deniedRequests.push(voteNumber)
+        await campaignDetails.save()
         res.json({
             status:"Success",
             message:"voted"
@@ -81,7 +84,8 @@ web3RouterVoting.post('/vote',auth,async (req, res) => {
     }
     try{
         const response = await voteInReq(contract,voteNumber,user.walletAddress,password)
-        info(response)
+        campaignDetails.voteRequests[voteNumber-1].votes+=1
+        await campaignDetails.save()
         res.json({
             status:"Success",
             message:"voted"
@@ -96,15 +100,31 @@ web3RouterVoting.post('/vote',auth,async (req, res) => {
 })
 
 web3RouterVoting.post("/useRequestedMoney",auth,async (req,res) => {
-    info(req.body)
     const {voteNumber, password,cid} = req.body
     const user = await User.findById(req.user._id)
     const campaignData = await Campaign.findById(cid)
+    const reciverUser = await User.findById(campaignData.voteRequests[voteNumber-1].receiver)
+    if(campaignData.voteRequests[voteNumber-1].votes ===0){
+        res.json({
+            status:"Failed to use Req",
+            message:"No one has Voted yet"
+        })
+        return
+    }
     try{
         const contract = loadContractAt(campaignData.address)
         const response = await activateRequest(contract, user.walletAddress, voteNumber,password)
-
-        info(response)
+        const tx = new Transaction({
+            senderId:campaignData._id,
+            receiverId:reciverUser._id,
+            amount:campaignData.voteRequests[voteNumber-1].amount,
+            txhash:response.transactionHash,
+        })
+        const savedTx = await tx.save()
+        campaignData.campaignTransactions.push(savedTx._id);// also need to add this to the user
+        reciverUser.transactions.push(savedTx._id);
+        await campaignData.save()
+        await reciverUser.save()
         res.json({
             status:"Success",
             message:"Request used, purchase successfull"
@@ -117,9 +137,5 @@ web3RouterVoting.post("/useRequestedMoney",auth,async (req,res) => {
         })
     }
 })
-// web3RouterVoting.post('/makeRequest',auth, async (req,res) => {
-    
-//     res.send('make request')
-// })
 
 module.exports = web3RouterVoting
