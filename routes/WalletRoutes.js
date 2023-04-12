@@ -1,14 +1,28 @@
 const { Router } = require("express")
 const Razorpay = require('razorpay');
+const bcrypt = require("bcrypt")
 const { err, info } = require("../utils/logger");
 const web3 = require("../web3/web3")
 const {Caddress,CoinsABI,coinsOwnerAccount}=require("../web3/contracts/ABIs");
+const auth=require("../middleware/auth");
+const User=require("../models/User");
 
 const router = Router();
 
 // get new access token
-router.post("/order/create", async (req, res) => {
+router.post("/order/create",auth,async (req, res) => {
     try {
+        const payingUser = await User.findById(req.user._id);
+        const passwordMatching = await bcrypt.compare(req.body.password, payingUser.password)
+        info('passwardMatching', passwordMatching)
+        if(!passwordMatching){
+            res.json({ 
+                error: true,
+                message: "Incorrect Password",
+                signatureIsValid: false 
+            })
+            return;
+        }
         const data = req.body
         const instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET })
         const options = {
@@ -26,7 +40,7 @@ router.post("/order/create", async (req, res) => {
     }
 });
 
-router.post("/payment/verify",async (req, res) => {
+router.post("/payment/verify",auth,async (req, res) => {
 
     const body = req.body.razorpay_order_id + "|" + req.body.razorpay_payment_id;
     const crypto = require("crypto");

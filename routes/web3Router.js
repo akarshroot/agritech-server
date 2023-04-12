@@ -1,7 +1,6 @@
 const auth=require("../middleware/auth")
 const Transaction=require("../models/Transaction")
 const User=require("../models/User")
-const {info}=require("../utils/logger")
 const {getBalance, transferKCO}=require("../web3/web3Wallet")
 
 const web3Router = require("express").Router()
