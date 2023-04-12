@@ -4,9 +4,9 @@
   "description": "Server for Project AgriTech",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "test": "cross-env NODE_ENV='testing' node index.js",
+    "start": "cross-env NODE_ENV='production' node index.js",
+    "dev": "cross-env NODE_ENV='development' nodemon index.js",
     "dev:c": "cls && nodemon index.js"
   },
   "repository": {
@@ -34,6 +34,7 @@
   "devDependencies": {
     "@openzeppelin/contracts": "^4.8.2",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "mongoose": "^7.0.3",
     "solc": "^0.8.19",
