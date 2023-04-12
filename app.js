@@ -11,6 +11,7 @@ const storeRoutes = require("./routes/StoreRoutes")
 const walletRoutes = require("./routes/WalletRoutes")
 const refreshTokenRoute = require("./routes/refreshToken")
 const cookies = require("cookie-parser");
+const path = require("path")
 const web3RouterVoting=require("./routes/web3RouterVoting");
 
 app.use(cookies());
@@ -35,5 +36,4 @@ app.use("/api/wallet/", walletRoutes)
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/build/index.html'));
   });
-
 module.exports = app
