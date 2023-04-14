@@ -4,9 +4,9 @@ const fs = require("fs");
 // const file = require('@openzeppelin/contracts/token/ERC20/IERC20.sol')
 
 const fileAddress = __dirname+'/contracts/funding2.sol'
-const fileAddress2 = process.env.NODE_ENV
+const fileAddress2 = process.env.NODE_ENV!=='production'
 ?__dirname+'../../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol'
-:"/opt/render/project/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol"
+:"/home/jastagarbrar/agritech-server/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol"
 
 const readFile = fs.readFileSync(fileAddress,'utf8');
 const readFile2 = fs.readFileSync(fileAddress2,'utf8');
