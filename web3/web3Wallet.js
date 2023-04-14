@@ -1,9 +1,15 @@
+const dotenv = require("dotenv")
 const web3 = require('./web3')
-const abi = require("./contracts/ABIs.js").CoinsABI
+const abi = require("./contracts/ABIs.js").CoinsABI2
 const { Caddress } = require("./contracts/ABIs.js")
 const { info } = require("../utils/logger");
 
+dotenv.config()
+
 const contract = new web3.eth.Contract(abi, Caddress)
+
+const managerAcc = process.env.BACKEND_COINBASE_WALLET_ADDRESS
+info(managerAcc)
 
 async function getBalance(accountAddress) {
 	let bal = await contract.methods.balanceOf(accountAddress).call()
@@ -30,7 +36,9 @@ async function transferFromKCO(fromAddress, toAddress, amount, password) {
 	info(unlockedAcc)
 	showAllowance(fromAddress, toAddress, password)
 	if (unlockedAcc) {
-		const res = await contract.methods.transferFrom(fromAddress, toAddress,amount).call()
+		const res = await contract.methods.transferWithPermit(fromAddress, toAddress,amount).send({
+            from:managerAcc
+        })
 		const { transactionHash } = res
 		info(transactionHash)
 		return res
@@ -68,6 +76,7 @@ async function showAllowance(fromAddress, toAddress, password) {
 		return 'Incorrect Password or account not correct'
 	}
 }
+
 
 
 async function addAccount(password) {

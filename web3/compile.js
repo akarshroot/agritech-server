@@ -4,9 +4,11 @@ const fs = require("fs");
 // const file = require('@openzeppelin/contracts/token/ERC20/IERC20.sol')
 
 const fileAddress = __dirname+'/contracts/funding2.sol'
-const fileAddress2 = process.env.NODE_ENV
-?__dirname+'../../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol'
-:"/opt/render/project/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol"
+// const fileAddress2 = process.env.NODE_ENV
+// ?__dirname+'../../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol'
+// :"/opt/render/project/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol"
+
+const fileAddress2 = __dirname+'../../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol'
 
 const readFile = fs.readFileSync(fileAddress,'utf8');
 const readFile2 = fs.readFileSync(fileAddress2,'utf8');
@@ -39,6 +41,6 @@ const output = JSON.parse(solc.compile(JSON.stringify(input), { import: findImpo
 const outputContract = output.contracts['funding2.sol'].kissanFundContract
 
 module.exports = {
-    compiledAPi:      outputContract.abi,
+    compiledABI:      outputContract.abi,
     compiledByteCode: outputContract.evm.bytecode.object
 }
