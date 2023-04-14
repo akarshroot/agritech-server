@@ -1,5 +1,6 @@
 require("dotenv").config()
-const logging = process.env.NODE_ENV!=='production'
+// const logging = process.env.NODE_ENV!=='production'
+const logging = true
 const seprator= "-------------------------------------------------------------------"
 const spacer= `
 `
