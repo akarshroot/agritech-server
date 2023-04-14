@@ -13,7 +13,8 @@ router.post("/plan/create", auth, async (req, res) => {
         data.estRevenue = 0;
         data.requirements.forEach(item => {
             data.estCost += item.estCost * item.quantity
-            data.estRevenue += item.estSale * item.quantity
+            if(item.estSale)
+                data.estRevenue += item.estSale * item.quantity
         });
         const plan = await Plan(data).save()
         if (plan)
