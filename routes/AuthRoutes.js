@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt")
 const generateTokens = require("../utils/generateTokens.js");
 const { addAccount } = require("../web3/web3Wallet.js");
 const { info } = require("../utils/logger.js");
+const web3=require("../web3/web3.js");
+const {default: Web3}=require("web3");
 // const {
 // 	signUpBodyValidation,
 // 	logInBodyValidation,
@@ -14,11 +16,6 @@ const router = Router();
 // signup
 router.post("/signup", async (req, res) => {
 	try {
-		// const { error } = signUpBodyValidation(req.body);
-		// if (error)
-		// 	return res
-		// 		.status(400)
-		// 		.json({ error: true, message: error.details[0].message });
 		const user = await User.findOne({ email: req.body.email });
 		if (user)
 			return res
@@ -28,7 +25,17 @@ router.post("/signup", async (req, res) => {
 		const salt = await bcrypt.genSalt(Number(process.env.SALT));
 		const hashPassword = await bcrypt.hash(req.body.password, salt);
 		const walletAddress = await addAccount(req.body.password)
-		info(walletAddress)
+		info( "0x"+ parseInt(Web3.utils.toWei("1","ether")).toString(16))
+		const value = "0x"+ parseInt(Web3.utils.toWei("1","ether")).toString(16)
+		const tx = {
+			from: process.env.BACKEND_COINBASE_WALLET_ADDRESS,
+			to: walletAddress,
+			value,
+			gas:1000000000,
+			gasLimit: 210000,
+		}
+		const signedtx = await web3.eth.accounts.signTransaction(tx,process.env.BACKEND_COINBASE_WALLET_PRIVATEKEY)
+		const sentTx = await web3.eth.sendSignedTransaction(signedtx.rawTransaction)
 		const userDoc = await new User({ ...req.body, password: hashPassword, walletAddress: walletAddress }).save();
 		res
 			.status(201)
@@ -36,7 +43,7 @@ router.post("/signup", async (req, res) => {
 		
 		
 	} catch (err) {
-		console.log(err.message);
+		console.log(err);
 		res.status(500).json({ error: true, message: "Internal Server Error" });
 	}
 });
