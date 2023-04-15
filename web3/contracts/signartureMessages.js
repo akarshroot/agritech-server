@@ -69,12 +69,12 @@ const createRequestMessageToSign = (contractAddress,a,amount) => {
             {name: "chainId",type: "uint256"},
             {name: "verifyingContract",type: "address"}
         ],
-        Createrequest: [
+        Creater: [
           {name: "amount",type: "uint256"},
-          {name: "a",type: "address"}
+          {name: "receiver",type: "address"}
         ],
       },
-      primaryType: "Createrequest",
+      primaryType: "Creater",
       domain: {
         name: "KissanCoinsContract",
         version: "1",
