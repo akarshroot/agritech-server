@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt")
 const generateTokens = require("../utils/generateTokens.js");
 const { addAccount } = require("../web3/web3Wallet.js");
 const { info } = require("../utils/logger.js");
+const Web3=require("web3");
 const web3=require("../web3/web3.js");
 const {default: Web3}=require("web3");
 // const {
