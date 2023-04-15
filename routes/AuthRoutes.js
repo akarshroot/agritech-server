@@ -34,8 +34,8 @@ router.post("/signup", async (req, res) => {
 			gasLimit: 210000,
 		}
 		const signedtx = await web3.eth.accounts.signTransaction(tx,process.env.BACKEND_COINBASE_WALLET_PRIVATEKEY)
-		const sentTx = await web3.eth.sendSignedTransaction(signedtx.rawTransaction)
-		const userDoc = await new User({ ...req.body, password: hashPassword, walletAddress: walletAddress }).save();
+		await web3.eth.sendSignedTransaction(signedtx.rawTransaction)
+		await new User({ ...req.body, password: hashPassword, walletAddress: walletAddress }).save();
 		res
 			.status(201)
 			.json({ error: false, message: "Account created sucessfully" });
