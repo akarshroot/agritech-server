@@ -30,7 +30,6 @@ router.post("/campaigns", auth, async (req, res) => {
     try {
         const id = req.body.userId
         const campaigns = await Campaign.find({ manager: id })
-        info(campaigns)
         if (!campaigns) res.status(200).json({ error: true, message: "No campaigns found." })
         else {
             res.status(200).json({
