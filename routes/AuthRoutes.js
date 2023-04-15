@@ -6,7 +6,6 @@ const { addAccount } = require("../web3/web3Wallet.js");
 const { info } = require("../utils/logger.js");
 const Web3=require("web3");
 const web3=require("../web3/web3.js");
-const {default: Web3}=require("web3");
 // const {
 // 	signUpBodyValidation,
 // 	logInBodyValidation,
@@ -26,7 +25,6 @@ router.post("/signup", async (req, res) => {
 		const salt = await bcrypt.genSalt(Number(process.env.SALT));
 		const hashPassword = await bcrypt.hash(req.body.password, salt);
 		const walletAddress = await addAccount(req.body.password)
-		info( "0x"+ parseInt(Web3.utils.toWei("1","ether")).toString(16))
 		const value = "0x"+ parseInt(Web3.utils.toWei("1","ether")).toString(16)
 		const tx = {
 			from: process.env.BACKEND_COINBASE_WALLET_ADDRESS,
