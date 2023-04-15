@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.922e25c4.css",
-    "main.js": "/static/js/main.4b882e18.js",
+    "main.js": "/static/js/main.cf5f495e.js",
     "static/media/tractors.jpg": "/static/media/tractors.215274e85efb7994cf0c.jpg",
     "static/media/vegetables.jpg": "/static/media/vegetables.98c6695aa432b7e995ca.jpg",
     "static/media/tractor-on-farmland.jpg": "/static/media/tractor-on-farmland.d49565dc351563cd5189.jpg",
@@ -16,10 +16,10 @@
     "index.html": "/index.html",
     "static/media/shopping_cart.svg": "/static/media/shopping_cart.e574678566198c80e15ac7adeb48f1c3.svg",
     "main.922e25c4.css.map": "/static/css/main.922e25c4.css.map",
-    "main.4b882e18.js.map": "/static/js/main.4b882e18.js.map"
+    "main.cf5f495e.js.map": "/static/js/main.cf5f495e.js.map"
   },
   "entrypoints": [
     "static/css/main.922e25c4.css",
-    "static/js/main.4b882e18.js"
+    "static/js/main.cf5f495e.js"
   ]
 }
