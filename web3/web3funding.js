@@ -18,8 +18,8 @@ async function getRaisedAmount(contract) {
 }
 async function contributeIn(contract, contributerAddress, amount, contributorPassword) {
 
-    const unlocked = await web3.eth.personal.unlockAccount(contributerAddress, contributorPassword, 1000)
-    // const approvalRes = await giveApproval(contributerAddress, contract._address, amount, contributorPassword)
+    const unlocked = await web3.eth.personal.unlockAccount(contributerAddress,contributorPassword,1000)
+    // const approvalRes = await giveApproval()
     info(unlocked)
     if (contract && unlocked) {
         const res = await contract.methods.contribute(amount).send({
