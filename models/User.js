@@ -60,7 +60,11 @@ const userSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Product'
         }
-    ]
+    ],
+    currentPlan: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Plan'
+    }
 });
 
 // Export the model

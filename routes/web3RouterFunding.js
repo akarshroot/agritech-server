@@ -113,7 +113,7 @@ web3RouterFunding.post('/getApproval', auth, async (req,res) => {
         })
     }catch(error){
         err(error.message)
-        res.status(500).json({ 
+        res.json({ 
             status:'Failed To Contribute',
             error: true,
             message: error.message })

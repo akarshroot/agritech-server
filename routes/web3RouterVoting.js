@@ -114,11 +114,12 @@ web3RouterVoting.post("/useRequestedMoney",auth,async (req,res) => {
     try{
         const contract = loadContractAt(campaignData.address)
         const response = await activateRequest(contract, user.walletAddress, voteNumber,password)
+        info(response)
         const tx = new Transaction({
             senderId:campaignData._id,
             receiverId:reciverUser._id,
             amount:campaignData.voteRequests[voteNumber-1].amount,
-            txhash:response.transactionHash,
+            txHash:response.transactionHash,
         })
         const savedTx = await tx.save()
         campaignData.campaignTransactions.push(savedTx._id);// also need to add this to the user

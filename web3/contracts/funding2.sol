@@ -35,7 +35,7 @@ contract kissanFundContract{
         uint amount;
     }
 
-    IERC20 token = IERC20(0x1cE8c5Ccf95154C3B5A806f90392B62A1540052e);
+    IERC20 token = IERC20(0xA9A470ad353967297F48A95D745390dECC53Ec35);
     mapping(uint => Request) public allRequests;
     uint public numberOfRequests;
 
@@ -131,8 +131,8 @@ contract kissanFundContract{
     }
     function transferToBuy(uint _reqNumber) public returns(bool){
         Request storage thisRequest = allRequests[_reqNumber];
+        require(!thisRequest.completed,"This request has been used already");
         require(thisRequest.numberOfVoters >= (noOfContributors/2), "50% or more Votes are not met (Insufficient Votes)");
-
         token.transfer(thisRequest.receiver,thisRequest.amount);
         thisRequest.completed = true;
         return true;

@@ -11,7 +11,7 @@ const router = Router();
 router.post("/data", auth, async (req, res) => {
     try {
         const id = req.body.userId
-        const user = await User.findOne({ _id: id })
+        const user = await User.findOne({ _id: id }).populate({path: 'currentPlan'})
         if (!user) res.status(400).json({ error: true, message: "User not found." })
         else {
             user.password = undefined
@@ -30,7 +30,6 @@ router.post("/campaigns", auth, async (req, res) => {
     try {
         const id = req.body.userId
         const campaigns = await Campaign.find({ manager: id })
-        info(campaigns)
         if (!campaigns) res.status(200).json({ error: true, message: "No campaigns found." })
         else {
             res.status(200).json({
