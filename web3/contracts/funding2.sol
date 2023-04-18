@@ -24,7 +24,7 @@ contract kissanFundContract{
     }
 
 
-    IERC20 token = IERC20(0xA9A470ad353967297F48A95D745390dECC53Ec35);
+    IERC20 token = IERC20(0xeF7a60d3539f300949C57034d07379DE689ff0C1);
     mapping(uint => Request) public allRequests;
     uint public numberOfRequests;
 

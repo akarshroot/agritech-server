@@ -49,6 +49,7 @@ router.post("/payment/verify",auth,async (req, res) => {
         //transfer KCO from admin to user wallet
         const walletAddress = req.body.walletAddress
         const unlocked = await web3.eth.personal.unlockAccount(walletAddress,req.body.password,1000)
+        const unlockedCoinsAccount = await web3.eth.personal.unlockAccount(coinsOwnerAccount,process.env.MANGER_ACCOUNT_PASS,2000)
         if(!unlocked){
             res.status(400).json({ error: true, message: 'WrongPassword' })
         }

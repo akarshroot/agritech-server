@@ -21,6 +21,5 @@ async function deployContract(account,password, target,deadline,minContribution)
     }
 }
 
-// deployContract('0x879005ce3b64a880e1512d759cecb1bd857590f8',"1234567890", 10000,3600,100)
 
 module.exports = deployContract

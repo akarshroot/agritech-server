@@ -572,8 +572,8 @@ const CoinsABI = [
 		"type": "function"
 	}
 ]
-const Caddress = "0xA9A470ad353967297F48A95D745390dECC53Ec35"
-const coinsOwnerAccount = '0x2ee4961905E3c9B6eC890d5F919224Ad6BD87637'
+const Caddress = "0xeF7a60d3539f300949C57034d07379DE689ff0C1"
+const coinsOwnerAccount = '0x879005CE3b64A880E1512D759CEcb1bd857590F8'
 // let Caddress
 
 // async function setAddress(){
