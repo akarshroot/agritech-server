@@ -1,15 +1,23 @@
 // const Caddress = require('./ABIs')
 const Caddress = '0x412fBbB6f6711A30a19dF07380508C42f2D9F5b1'
 
+const EIP712Domain = [
+  {name: "name","type": "string"},
+  {name: "version","type": "string"},
+  {name: "chainId","type": "uint256"},
+  {name: "verifyingContract","type": "address"}
+]
+
+const ContractDomain = {
+  name: "KissanCoinsContract",
+  version: "1",
+  chainId: 1337,
+}
+
 const transferToWalletMessageToSign = (owner,toAddress,nonce,value) => {
     return {
         types: {
-          EIP712Domain: [
-            {name: "name","type": "string"},
-            {name: "version","type": "string"},
-            {name: "chainId","type": "uint256"},
-            {name: "verifyingContract","type": "address"}
-          ],
+          EIP712Domain,
           Permit: [
             {name: "owner",type: "address"},
             {name: "spender",type: "address"},
@@ -37,12 +45,7 @@ const transferToWalletMessageToSign = (owner,toAddress,nonce,value) => {
 const contributeMessageToSign = (contractAddress,amount,sender) => {
     return {
       types: {
-      EIP712Domain: [
-        {name: "name",type: "string"},
-        {name: "version",type: "string"},
-        {name: "chainId",type: "uint256"},
-        {name: "verifyingContract",type: "address"}
-      ],
+      EIP712Domain,
       Contribute: [
           {name: "amount",type: "uint256"},
           {name: "sender",type: "address"}
@@ -50,9 +53,7 @@ const contributeMessageToSign = (contractAddress,amount,sender) => {
     },
     primaryType: "Contribute",
     domain: {
-      name: "KissanCoinsContract",
-      version: "1",
-      chainId: 1337,
+      ...ContractDomain,
       verifyingContract: contractAddress
     },
     message: {
@@ -60,15 +61,10 @@ const contributeMessageToSign = (contractAddress,amount,sender) => {
       sender
     }}
 }
-const createRequestMessageToSign = (contractAddress,a,amount) => {
+const createRequestMessageToSign = (contractAddress,receiver,amount) => {
     return {
         types: {
-        EIP712Domain: [
-            {name: "name",type: "string"},
-            {name: "version",type: "string"},
-            {name: "chainId",type: "uint256"},
-            {name: "verifyingContract",type: "address"}
-        ],
+        EIP712Domain,
         Creater: [
           {name: "amount",type: "uint256"},
           {name: "receiver",type: "address"}
@@ -76,24 +72,17 @@ const createRequestMessageToSign = (contractAddress,a,amount) => {
       },
       primaryType: "Creater",
       domain: {
-        name: "KissanCoinsContract",
-        version: "1",
-        chainId: 1337,
+        ...ContractDomain,
         verifyingContract: contractAddress
       },
       message: {
         amount,
-        a
+        receiver
       }}
 }
 const voteRequestMessageToSign = (contractAddress,number,sender) => {
     return {types: {
-      EIP712Domain: [
-        {name: "name",type: "string"},
-        {name: "version",type: "string"},
-        {name: "chainId",type: "uint256"},
-        {name: "verifyingContract",type: "address"}
-      ],
+      EIP712Domain,
       VoteIn: [
         {name: "number",type: "uint256"},
         {name: "sender",type: "address"}
@@ -101,9 +90,7 @@ const voteRequestMessageToSign = (contractAddress,number,sender) => {
     },
     primaryType: "VoteIn",
     domain: {
-      name: "KissanCoinsContract",
-      version: "1",
-      chainId: 1337,
+      ...ContractDomain,
       verifyingContract: contractAddress
     },
     message: {
@@ -113,22 +100,15 @@ const voteRequestMessageToSign = (contractAddress,number,sender) => {
 }
 const transferToBuyMessageToSign = (contractAddress,number,sender) => {
     return {types: {
-      EIP712Domain: [
-        {name: "name","type": "string"},
-        {name: "version","type": "string"},
-        {name: "chainId","type": "uint256"},
-        {name: "verifyingContract","type": "address"}
-      ],
-      TransferToBuy: [
+      EIP712Domain,
+      UseReq: [
           {name: "number",type: "uint256"},
           {name: "sender",type: "address"}
       ],
     },
-    primaryType: "TransferToBuy",
+    primaryType: "UseReq",
     domain: {
-      name: "KissanCoins",
-      version: "1",
-      chainId: "1337",
+      ...ContractDomain,
       verifyingContract: contractAddress
     },
     message: {
