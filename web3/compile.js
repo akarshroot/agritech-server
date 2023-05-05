@@ -1,7 +1,6 @@
 require('dotenv').config()
 const solc = require("solc")
 const fs = require("fs");
-// const file = require('@openzeppelin/contracts/token/ERC20/IERC20.sol')
 
 const fileAddress = __dirname+'/contracts/funding2.sol'
 const fileAddress2 = process.env.NODE_ENV!=='production'
@@ -35,8 +34,7 @@ var input = {
 };
 
 const output = JSON.parse(solc.compile(JSON.stringify(input), { import: findImports }));
-// info(output)
-const outputContract = output.contracts['funding2.sol'].kissanFundContract
+const outputContract = output.contracts['funding2.sol'].kissanFundContract2
 
 module.exports = {
     compiledABI:      outputContract.abi,

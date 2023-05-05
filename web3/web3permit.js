@@ -1,17 +1,19 @@
+require("dotenv").config()
 const fs = require('fs')
 const {signTypedData,SignTypedDataVersion} = require("@metamask/eth-sig-util");
 const abi = require("./contracts/ABIs.js").CoinsABI2
 const {Caddress} = require("./contracts/ABIs.js")
 const web3=require("./web3");
 const {info}=require("../utils/logger.js");
-require("dotenv").config()
+const {permitWalletMessageToSign}=require('./contracts/signartureMessages.js');
+const {loadContractAt}=require('./web3funding.js');
 
-info(fs)
 
 const contract = new web3.eth.Contract(abi,Caddress)
 
-const myPrivateKey = process.env.BACKEND_COINBASE_WALLET_PRIVATEKEY
-const managerAcc = process.env.BACKEND_COINBASE_WALLET_ADDRESS
+// const myPrivateKey = process.env.BACKEND_COINBASE_WALLET_PRIVATEKEY
+// const managerAcc = process.env.BACKEND_COINBASE_WALLET_ADDRESS
+const managerAcc = '0x04c3a9591730b0fb78f18a258520d8f23431f06c'
 
 function splitSignature(signature){
     const r = signature.slice(0,66);
@@ -22,41 +24,10 @@ function splitSignature(signature){
     console.log("v:",v)
     return {r,s,v}
 }
-
 async function getSign(owner,toAddress,value,password){
     const nonce = await contract.methods.nonces(owner).call()
-    const msgData = {
-        types: {
-          EIP712Domain: [
-            {name: "name","type": "string"},
-            {name: "version","type": "string"},
-            {name: "chainId","type": "uint256"},
-            {name: "verifyingContract","type": "address"}
-          ],
-          Permit: [
-            {name: "owner",type: "address"},
-            {name: "spender",type: "address"},
-            {name: "value",type: "uint256"},
-            {name: "nonce",type: "uint256"},
-            {name: "deadline",type: "uint256"}
-          ],
-        },
-        primaryType: "Permit",
-        domain: {
-          name: "KissanCoins",
-          version: "1",
-          chainId: "1337",
-          verifyingContract: Caddress
-        },
-        message: {
-          owner,
-          spender: toAddress,
-          value,
-          nonce,
-          deadline: '10000000000'
-        }
-    }
-    // const signature =await web3.eth.personal.sign(msgData,owner,'1234567890')
+    info(nonce);
+    const msgData = permitWalletMessageToSign(owner,toAddress,nonce,value)
     const signature = signTypedData({
         privateKey:getPrivateKeyFromAccount(owner,password),
         data:msgData,
@@ -65,90 +36,61 @@ async function getSign(owner,toAddress,value,password){
     return splitSignature(signature)
     
 }
-
 function getPrivateKeyFromAccount(account,password){
     info("Getting Users Private Key....")
     const encryptedFile = fs.readdirSync(__dirname+'/../keystore')
+    info("Encrypted Files->",encryptedFile)
     const requiredPath = encryptedFile.find(e => {
-        return e.split("--")[2]===account.slice(2)
+        info('finding',e.split("--")[2],"for",account.slice(2))
+        return e.split("--")[2]===account.slice(2).toLowerCase()
     })
+    info("RequiredFilePath->",requiredPath)
     if(!requiredPath){
         console.log("account Not Found!!")
         return
     }
     const encryptedAccountFile = fs.readFileSync(__dirname+'/../keystore/'+requiredPath,'utf8')
+    info('returning privateKey')
     return web3.eth.accounts.decrypt(encryptedAccountFile,password).privateKey.slice(2)
 }
-
-async function givePermit(fromAddress, amount, password){
+async function givePermit(fromAddress,toAddress, amount, password){
+    info('giving permit...')
     const unlockedAcc = await web3.eth.personal.unlockAccount(fromAddress,password,1000)
 	console.log(unlockedAcc)
 	if(unlockedAcc){
         info('getting Signature...')
-        const {r,s,v} = await getSign(fromAddress,Caddress,amount,password)
+        const {r,s,v} = await getSign(fromAddress,toAddress,amount,password)
         info('Signature Got',r,s,v)
-
-        // relayer part
-		const permit = contract.methods.permit(fromAddress,Caddress,amount,'10000000000',v,r,s)
-        const estimatedGas = await permit.estimateGas()
-        const encodedPermit = permit.encodeABI()
-        const tx = {
-            from:managerAcc,
-            to:Caddress,
-            data:encodedPermit,
-            gas: estimatedGas
-        }
-        const signedTx = await web3.eth.accounts.signTransaction(tx,myPrivateKey)
-        const respTx =await web3.eth.sendSignedTransaction(signedTx.rawTransaction)
-        return respTx
-    }
-}
-
-
-
-module.exports = givePermit
-
-/*
-
-async function transferKCO(fromAddress,toAddress, amount, password){
-	
-        const res = await contract.methods.transferWithPermit(fromAddress,toAddress,amount).send({
+		const permit = contract.methods.permit(fromAddress,toAddress,amount,'10000000000',v,r,s).send({
             from:managerAcc
         })
-        console.log("Transfering-->",res)
-	}
-	return false
+        return permit
+    }
 }
-
-
-"types": {
-    "EIP712Domain": [
-    {"name": "name","type": "string"},
-    {"name": "version","type": "string"},
-    {"name": "chainId","type": "uint256"},
-    {"name": "verifyingContract","type": "address"}
-    ],
-    "Permit": [
-    {"name": "owner","type": "address"},
-    {"name": "spender","type": "address"},
-    {"name": "value","type": "uint256"},
-    {"name": "nonce","type": "uint256"},
-    {"name": "deadline","type": "uint256"}
-    ],
-},
-"primaryType": "Permit",
-"domain": {
-    "name": "KissanCoins",
-    "version": "1",
-    "chainId": "1",
-    "verifyingContract": "0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B"
-},
-"message": {
-    "owner":"0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2",
-    "spender":"0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db",
-    "value":"1000",
-    "nonce":"0x00",
-    "deadline": "10000000000"
+async function contributeIn(loadedContract, contributerAddress, amount) {
+    const unlocked = await web3.eth.personal.unlockAccount(managerAcc,"",1000)
+    info(unlocked)
+    if (contract && unlocked) {
+        const res = await loadedContract.methods.Contribute(amount,contributerAddress).send({
+            from: managerAcc
+        })
+        return res
+        
+    } else {
+        return 'No Contract selected or password incorrect'
+    }
 }
+async function ContributeGasLessly(fromAddress,toAddress,amount,password){
+    const permitTx = await givePermit(fromAddress,toAddress,amount,password);
+    console.log("Final permit-->", permitTx)
+    const thisContract = loadContractAt(toAddress);
+    const contributionCalling = await contributeIn(thisContract,fromAddress,amount);
 
-*/
+    console.log("Contribution Calling--->",contributionCalling)
+    return contributionCalling
+}
+module.exports = {
+    ContributeGasLessly,
+    givePermit,
+    getPrivateKeyFromAccount,
+}

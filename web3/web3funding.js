@@ -1,10 +1,11 @@
 const web3 = require('./web3.js')
-const { FundingABI } = require('./contracts/ABIs.js')
+const { FundingABI2 } = require('./contracts/ABIs.js')
 const { info } = require("../utils/logger");
-const { giveApproval } = require('./web3Wallet.js')
+const {getPrivateKeyFromAccount}=require('./web3permit.js');
+const {createRequestMessageToSign}=require('./contracts/signartureMessages.js');
 
 function loadContractAt(address) {
-    const findcontract = new web3.eth.Contract(FundingABI, address)
+    const findcontract = new web3.eth.Contract(FundingABI2, address)
     return findcontract
 }
 
@@ -16,31 +17,26 @@ async function getRaisedAmount(contract) {
         return 'No Contract selected'
     }
 }
-async function contributeIn(contract, contributerAddress, amount, contributorPassword) {
 
-    const unlocked = await web3.eth.personal.unlockAccount(contributerAddress,contributorPassword,1000)
-    // const approvalRes = await giveApproval()
-    info(unlocked)
-    if (contract && unlocked) {
-        const res = await contract.methods.contribute(amount).send({
-            from: contributerAddress
-        })
-        return res
-
-    } else {
-        return 'No Contract selected or password incorrect'
-    }
+async function getSignR(contractAddress,toAddress,value,signer,password){
+	const msgData = createRequestMessageToSign(contractAddress,toAddress,value)
+  const signature1 = signTypedData({
+      privateKey:getPrivateKeyFromAccount(signer,password),
+      data:msgData,
+      version: SignTypedDataVersion.V4,
+    });
+    return splitSignature(signature1)
+    
 }
-
-
 // initiate VoteReq
 async function initateVoteReq(contract, fromAddress, toAddess, amount, reason, password) {
     const Amount = amount
-    const unlocked = await web3.eth.personal.unlockAccount(fromAddress, password, 1000)
+    const unlocked = await web3.eth.personal.unlockAccount(process.env.BACKEND_COINBASE_WALLET_ADDRESS, process.env.BACKEND_COINBASE_WALLET_PASSWORD, 1000)
     info(unlocked)
     if (contract && unlocked) {
-        const response = await contract.methods.createRequest(reason, toAddess, Amount).send({
-            from: fromAddress
+        const {r,s,v} = getSignR(contract._address,toAddess,amount,fromAddress,password);
+        const response = await contract.methods.createRequest(reason, toAddess, Amount,v,r,s).send({
+            from: process.env.BACKEND_COINBASE_WALLET_ADDRESS
         })
         info("Vote Res->", response)
         return response
@@ -81,7 +77,6 @@ async function activateRequest(contract, fromAddress, reqNumber, password) {
 module.exports = {
     loadContractAt,
     getRaisedAmount,
-    contributeIn,
     initateVoteReq,
     voteInReq,
     activateRequest,

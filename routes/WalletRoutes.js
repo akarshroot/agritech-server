@@ -3,7 +3,7 @@ const Razorpay = require('razorpay');
 const bcrypt = require("bcrypt")
 const { err, info } = require("../utils/logger");
 const web3 = require("../web3/web3")
-const {Caddress,CoinsABI,coinsOwnerAccount}=require("../web3/contracts/ABIs");
+const {Caddress,CoinsABI}=require("../web3/contracts/ABIs");
 const auth=require("../middleware/auth");
 const User=require("../models/User");
 
@@ -49,13 +49,14 @@ router.post("/payment/verify",auth,async (req, res) => {
         //transfer KCO from admin to user wallet
         const walletAddress = req.body.walletAddress
         const unlocked = await web3.eth.personal.unlockAccount(walletAddress,req.body.password,1000)
+        await web3.eth.personal.unlockAccount(process.env.BACKEND_COINBASE_WALLET_ADDRESS,process.env.BACKEND_COINBASE_WALLET_PASSWORD,1000)
         if(!unlocked){
             res.status(400).json({ error: true, message: 'WrongPassword' })
         }
         const KCOcontract = new web3.eth.Contract(CoinsABI,Caddress)
         try{
             const response = await KCOcontract.methods.withDrawTokens(walletAddress,(req.body.amount-1)).send({
-                from:coinsOwnerAccount
+                from:process.env.BACKEND_COINBASE_WALLET_ADDRESS
             })
             const tx = response.transactionHash
             info(tx)

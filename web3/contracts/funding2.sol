@@ -2,10 +2,8 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract kissanFundContract{
+contract kissanFundContract2{
 
     mapping(address => uint) public contributors;
     address public manager;
@@ -13,7 +11,6 @@ contract kissanFundContract{
     uint public deadline;
     uint public minContribution;
     uint public noOfContributors;
-    
     struct EIP712Domain {
         string  name;
         string  version;
@@ -29,30 +26,10 @@ contract kissanFundContract{
         mapping(address => bool) voters;
         uint numberOfVoters;
     }
-    struct ReqData {
-        string reason;
-        address receiver;
-        uint amount;
-    }
 
-    IERC20 token = IERC20(0xA9A470ad353967297F48A95D745390dECC53Ec35);
+    IERC20 token = IERC20(0x8f13012ef2869c33dcB260bcc498C8eC9A593691);
     mapping(uint => Request) public allRequests;
     uint public numberOfRequests;
-
-    constructor(address _owner,uint _target, uint _deadline, uint _minContribution){
-        DOMAIN_SEPARATOR = hash(EIP712Domain({
-            name: "KissanCoins",
-            version: '1',
-            chainId: block.chainid,
-            verifyingContract: address(this)
-        }));
-        
-        manager = _owner;
-        target = _target;
-        deadline = block.timestamp + _deadline;
-        minContribution = _minContribution;
-
-    }
     bytes32 DOMAIN_SEPARATOR;
 
     function hash(EIP712Domain memory eip712Domain) internal pure returns (bytes32) {
@@ -65,47 +42,78 @@ contract kissanFundContract{
         ));
     }
 
-    function hash(ReqData memory greeting) internal pure returns (bytes32) {
+    constructor(address _owner,uint _target, uint _deadline, uint _minContribution){
+        DOMAIN_SEPARATOR = hash(EIP712Domain({
+            name: "KissanCoinsContract",
+            version: '1',
+            chainId: 1337,
+            verifyingContract: address(this)
+        }));
+        
+        manager = _owner;
+        target = _target;
+        deadline = block.timestamp + _deadline;
+        minContribution = _minContribution;
+
+    }
+    
+
+    function hashR(uint256 amount,address sender) internal pure returns (bytes32) {
         return keccak256(abi.encode(
-            keccak256("Greeting(string text,uint deadline)"),
-            keccak256(bytes(greeting.text)),
+            keccak256("Creater(uint256 amount,address receiver)"),
+            amount,
+            sender
+        ));
+    }
+    function hashVR(uint256 number, address sender) internal pure returns (bytes32) {
+        return keccak256(abi.encode(
+            keccak256("VoteIn(uint256 number,address sender)"),
+            number,
+            sender
+        ));
+    }
+    function hashTR(uint256 number, address sender) internal pure returns (bytes32) {
+        return keccak256(abi.encode(
+            keccak256("UseReq(uint256 number,address sender)"),
+            number,
+            sender
         ));
     }
 
-    function verify(ReqData memory reqdata, uint8 v, bytes32 r, bytes32 s) public view returns (bool) {
+
+    function verifyR(uint256 amount,address sender, uint8 v, bytes32 r, bytes32 s) internal view returns (bool) {
         bytes32 digest = keccak256(abi.encodePacked(
             "\x19\x01",
             DOMAIN_SEPARATOR,
-            hash(reqdata)
+            hashR(amount,sender)
+        ));
+        return ecrecover(digest, v, r, s) == manager;
+    }
+    function verifyVR(uint256 number,address sender, uint8 v, bytes32 r, bytes32 s) internal view returns (bool) {
+        bytes32 digest = keccak256(abi.encodePacked(
+            "\x19\x01",
+            DOMAIN_SEPARATOR,
+            hashVR(number,sender)
+        ));
+        return ecrecover(digest, v, r, s) == manager;
+    }
+    function verifyTR(uint256 number,address sender, uint8 v, bytes32 r, bytes32 s) internal view returns (bool) {
+        bytes32 digest = keccak256(abi.encodePacked(
+            "\x19\x01",
+            DOMAIN_SEPARATOR,
+            hashTR(number,sender)
         ));
         return ecrecover(digest, v, r, s) == manager;
     }
 
-    // function greet(Greeting memory greeting, address sender, uint8 v, bytes32 r, bytes32 s) public {
-    //     require(verify(greeting, sender, v, r, s), "Invalid signature");
-    //     require(block.timestamp <= greeting.deadline, "Deadline reached");
-    //     greetingText = greeting.text;
-    //     greetingSender = sender;
-    // }
-
-
-
-    
-
-    function GetUserTokenBalance() public view returns(uint256){ 
-        return token.balanceOf(msg.sender);
-    }
-    function GetAllowance() public view returns(uint256){
-        return token.allowance(msg.sender, address(this));
-    }
-    function contribute(uint256 _tokenamount, uint8 v, bytes32 r, bytes32 s) public returns(bool) {
-        require(verify(greeting, sender, v, r, s), "Invalid signature");
+    function Contribute(uint256 _tokenamount,address sender) public returns(bool) {
+    //     require(verifyC(_tokenamount,sender , v, r, s), "Invalid signature");
         require(_tokenamount >= minContribution, "Minimum contribution not met");
-        token.transferFrom(msg.sender,address(this), _tokenamount);
-        if(contributors[msg.sender] == 0){
+        token.transferFrom(sender,address(this), _tokenamount);
+        if(contributors[sender] == 0){
             noOfContributors++;
         }
-        contributors[msg.sender] += _tokenamount;
+        contributors[sender] += _tokenamount;
         return true;
     }
     function GetContractTokenBalance() public view returns(uint256){
@@ -114,25 +122,27 @@ contract kissanFundContract{
 
 
 
-    function createRequest(ReqData memory dataIncomming, address _receiver, uint _amount, uint8 v, bytes32 r, bytes32 s) public  {
-        require(verify(greeting, sender, v, r, s), "Invalid signature");
+    function CreateRequest(string memory reason ,address receiver, uint256 amount, uint8 v, bytes32 r, bytes32 s) public  {
+        require(verifyR(amount,receiver, v, r, s), "Invalid signature");
         Request storage newReq = allRequests[numberOfRequests++];
-        newReq.reason = dataIncomming.reason;
-        newReq.amount = dataIncomming.amount;
-        newReq.receiver = dataIncomming.receiver;
+        newReq.reason = reason;
+        newReq.amount = amount;
+        newReq.receiver = receiver;
         newReq.numberOfVoters = 0;
     }
-    function voteRequest(uint _reqNumber) public {
-        require(contributors[msg.sender]>0,"You are not a Contributor, so you cannot vote");
+    function VoteRequest(uint256 _reqNumber,address sender, uint8 v, bytes32 r, bytes32 s) public {
+        require(verifyVR(_reqNumber,sender, v, r, s), "Invalid signature");
+        require(contributors[sender]>0,"You are not a Contributor, so you cannot vote");
         Request storage thisRequest = allRequests[_reqNumber];
-        require(thisRequest.voters[msg.sender] == false, "You have already voted!!");
-        thisRequest.voters[msg.sender] = true;
+        require(thisRequest.voters[sender] == false, "You have already voted!!");
+        thisRequest.voters[sender] = true;
         thisRequest.numberOfVoters++;
     }
-    function transferToBuy(uint _reqNumber) public returns(bool){
+    function TransferToBuy(uint256 _reqNumber,address sender,uint8 v, bytes32 r, bytes32 s) public returns(bool){
+        require(verifyTR(_reqNumber,sender, v, r, s), "Invalid signature");
         Request storage thisRequest = allRequests[_reqNumber];
-        require(!thisRequest.completed,"This request has been used already");
         require(thisRequest.numberOfVoters >= (noOfContributors/2), "50% or more Votes are not met (Insufficient Votes)");
+
         token.transfer(thisRequest.receiver,thisRequest.amount);
         thisRequest.completed = true;
         return true;

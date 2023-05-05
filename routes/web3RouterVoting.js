@@ -26,7 +26,6 @@ web3RouterVoting.post('/makeRequest',auth, async (req,res) => {
         product = await Product.findById(receiverProduct)
         const reqAmount = product.price
         const finalreceiver= '0x5c5e8d4372c726e3643fe2bb9c6c643c9fcff6f6';
-        // const ProductOwner = await User.findById(product.soldBy)    //its sold by AgriTech for now
         dataFormed = {
             reason,
             receiver:finalreceiver,
@@ -43,7 +42,7 @@ web3RouterVoting.post('/makeRequest',auth, async (req,res) => {
     }
     try{
         const contract = loadContractAt(campaignData.address);
-        const response = await initateVoteReq(contract,user.walletAddress,dataFormed.receiver,dataFormed.amount,dataFormed.reason,password)
+        initateVoteReq(contract,user.walletAddress,dataFormed.receiver,dataFormed.amount,dataFormed.reason,password)
         
         const voteNumberBylen = campaignData.voteRequests.length
         const voteData = {

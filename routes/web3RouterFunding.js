@@ -3,9 +3,9 @@ const Campaign = require("../models/Campaign");
 const ContributionTx=require("../models/ContributionTx");
 const { info, err } = require("../utils/logger");
 const deployContract = require("../web3/deploy");
-const { loadContractAt, getRaisedAmount, contributeIn } = require("../web3/web3funding");
+const { loadContractAt, getRaisedAmount } = require("../web3/web3funding");
 const auth = require("../middleware/auth");
-const { giveApproval } = require("../web3/web3Wallet");
+const {ContributeGasLessly}=require("../web3/web3permit");
 
 const web3RouterFunding = require("express").Router()
 
@@ -86,9 +86,9 @@ web3RouterFunding.post('/getApproval', auth, async (req,res) => {
     const user = await User.findById(req.user._id);
     const contractFound = await Campaign.findById(incommingData.cid)
     try{
-        await giveApproval(user.walletAddress,contractFound.address,incommingData.amount,incommingData.password)
-        const contract = loadContractAt(contractFound.address);
-        const txHash = await contributeIn(contract, user.walletAddress, incommingData.amount, incommingData.password);
+        // await giveApproval(user.walletAddress,contractFound.address,incommingData.amount,incommingData.password)
+        // const txHash = await contributeIn(contract, user.walletAddress, incommingData.amount, incommingData.password);
+        const txHash =await ContributeGasLessly(user.walletAddress,contractFound.address,incommingData.amount,incommingData.password)
         const tx = new ContributionTx({
             senderId: user._id,
             receiverId: contractFound._id,

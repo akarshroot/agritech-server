@@ -1,5 +1,4 @@
-// const Caddress = require('./ABIs')
-const Caddress = '0x412fBbB6f6711A30a19dF07380508C42f2D9F5b1'
+const {Caddress} = require('./ABIs')
 
 const EIP712Domain = [
   {name: "name","type": "string"},
@@ -14,7 +13,9 @@ const ContractDomain = {
   chainId: 1337,
 }
 
-const transferToWalletMessageToSign = (owner,toAddress,nonce,value) => {
+
+const permitWalletMessageToSign = (owner,toAddress,nonce,value) => {
+    console.log("Coins Addess",Caddress)
     return {
         types: {
           EIP712Domain,
@@ -42,6 +43,8 @@ const transferToWalletMessageToSign = (owner,toAddress,nonce,value) => {
         }
     }
 }
+
+
 const contributeMessageToSign = (contractAddress,amount,sender) => {
     return {
       types: {
@@ -118,7 +121,7 @@ const transferToBuyMessageToSign = (contractAddress,number,sender) => {
 }
 
 module.exports ={
-    transferToWalletMessageToSign,
+    permitWalletMessageToSign,
     createRequestMessageToSign,
     contributeMessageToSign,
     voteRequestMessageToSign,
