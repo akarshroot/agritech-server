@@ -6,6 +6,14 @@ const contractSchema = new mongoose.Schema({
     target:Number,
     deadline:Number,
     minContri:Number,
+    description: {
+        content: String,
+        maurityReward: String,
+        unusedFundsRefund: {
+            type: Boolean,
+            default: true
+        }
+    },
     dateCreated:{
         type: Date,
         default: ()=> Date.now()
