@@ -6,7 +6,7 @@ const {
 
 }=require("./contracts/signartureMessages");
 const {signTypedData,SignTypedDataVersion} = require("@metamask/eth-sig-util");
-// const {getPrivateKeyFromAccount}=require("./web3permit");
+const {getPrivateKeyFromAccount}=require("./web3permit");
 
 
 // const contract = new web3.eth.Contract(abi,Caddress)
@@ -54,7 +54,16 @@ async function getSignTR(contractAddress,sender,number,password){
     return splitSignature(signature1)
     
 }
-
+async function getSignR(contractAddress,toAddress,value,signer,password){
+	const msgData = createRequestMessageToSign(contractAddress,toAddress,value)
+  const signature1 = signTypedData({
+      privateKey:getPrivateKeyFromAccount(signer,password),
+      data:msgData,
+      version: SignTypedDataVersion.V4,
+    });
+    return splitSignature(signature1)
+    
+}
 async function getSignC(contractAddress,sender,amount,password){
     const msgData = contributeMessageToSign(contractAddress,amount,sender)
     const signature1 = signTypedData({
@@ -68,7 +77,7 @@ async function getSignC(contractAddress,sender,amount,password){
 
 module.exports = {
 	getSignC,
-	// getSignR,
+	getSignR,
 	getSignTR,
 	getSignVR
 }
