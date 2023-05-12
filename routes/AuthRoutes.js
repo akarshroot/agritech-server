@@ -59,19 +59,20 @@ router.post("/otp/verify", async (req, res) => {
 		const userId = req.body.userId
 		const code = req.body.code
 		const generatedOTP = await OTP.findOne({ user: userId })
-		if(!generatedOTP) {
-			res.status(400).json({error: true, message: "OTP not generated or is expired."})
+		if (!generatedOTP) {
+			res.status(400).json({ error: true, message: "OTP not generated or is expired." })
 		}
 		else {
-			if (code === generatedOTP.otp) {
-				res.status(200).json({ error: false, message: "Email verified successfully!"})
+			if (parseInt(code) === generatedOTP.otp) {
+				await User.findOneAndUpdate({ _id: userId }, { verified: true })
+				res.status(200).json({ error: false, message: "Email verified successfully!" })
 			}
 			else {
-				res.status(400).json({ error: true, message: "Email verification failed. Invalid OTP."})
+				res.status(400).json({ error: true, message: "Email verification failed. Invalid OTP." })
 			}
 		}
 	} catch (error) {
-
+		res.status(500).json({ error: true, message: "Internal Server Error." })
 	}
 })
 
