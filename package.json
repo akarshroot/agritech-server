@@ -29,9 +29,12 @@
     "cookie-parser": "^1.4.6",
     "ethereumjs-common": "^1.5.2",
     "express": "^4.18.2",
+    "googleapis": "^118.0.0",
     "jsonwebtoken": "^9.0.0",
+    "nodemailer": "^6.9.2",
     "nodemon": "^2.0.21",
-    "razorpay": "^2.8.6"
+    "razorpay": "^2.8.6",
+    "socket.io": "^4.6.1"
   },
   "devDependencies": {
     "@metamask/eth-sig-util": "^5.0.2",

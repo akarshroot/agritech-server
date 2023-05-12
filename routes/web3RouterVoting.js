@@ -60,7 +60,8 @@ web3RouterVoting.post('/makeRequest',auth, async (req,res) => {
         })
     }catch(error){
         err(error.message)
-        res.json({
+        res.status(400).json({
+            error: true,
             status:'Failed to create req',
             message: error.message
         })

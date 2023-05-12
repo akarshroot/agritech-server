@@ -64,6 +64,10 @@ const userSchema = new mongoose.Schema({
     currentPlan: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Plan'
+    },
+    verified: {
+        type: Boolean,
+        default: false
     }
 });
 

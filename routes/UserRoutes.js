@@ -5,13 +5,14 @@ const { info, err } = require("../utils/logger.js");
 const Campaign = require("../models/Campaign.js");
 const { default: mongoose } = require("mongoose");
 const Cart = require("../models/Cart.js");
+const Order = require("../models/Order.js");
 
 const router = Router();
 
 router.post("/data", auth, async (req, res) => {
     try {
         const id = req.body.userId
-        const user = await User.findOne({ _id: id }).populate({path: 'currentPlan'})
+        const user = await User.findOne({ _id: id }).populate({ path: 'currentPlan' })
         if (!user) res.status(400).json({ error: true, message: "User not found." })
         else {
             user.password = undefined
@@ -47,7 +48,7 @@ router.post("/cart", auth, async (req, res) => {
     try {
         const id = req.body.userId
         const productId = req.body.productId
-        const cart = await Cart({ownerId: id, product: productId}).save()
+        const cart = await Cart({ ownerId: id, product: productId }).save()
         if (!cart) res.status(200).json({ error: true, message: "No cart found." })
         else {
             res.status(200).json({
@@ -65,9 +66,9 @@ router.post("/cart", auth, async (req, res) => {
 router.get("/cart", auth, async (req, res) => {
     try {
         const id = new mongoose.Types.ObjectId(req.query.user)
-        const cart = await Cart.find({ ownerId: id }).populate({path: "product"})
+        const cart = await Cart.find({ ownerId: id }).populate({ path: "product" })
         let total = 0;
-        cart.forEach((item) => {total += item.product.price})
+        cart.forEach((item) => { total += item.product.price })
         if (!cart) res.status(200).json({ error: true, message: "No cart found." })
         else {
             res.status(200).json({
@@ -96,6 +97,16 @@ router.delete("/cart/:id", auth, async (req, res) => {
     } catch (error) {
         err(error)
         res.status(500).json({ error: true, message: "Internal Server Error" })
+    }
+})
+
+
+router.post("/admin/data", auth, async (req, res) => {
+    try {
+        const orders = await Order.find({})
+        res.status(200).json({ error: false, message: `${orders.length} records fetched.`, data: orders })
+    } catch (error) {
+        res.status(500).json({ error: true, message: "Internal server error." })
     }
 })
 

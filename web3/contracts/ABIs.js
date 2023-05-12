@@ -1290,6 +1290,14 @@ const CoinsABI2 = [
 ]
 const Caddress = "0x8f13012ef2869c33dcB260bcc498C8eC9A593691"
 const coinsOwnerAccount = process.env.BACKEND_COINBASE_WALLET_ADDRESS
+// let Caddress
+
+// async function setAddress(){
+// 	res = await fetch('https://asia-south1-kissanblockchain.cloudfunctions.net/cAddressFunction')
+// 	const {data} = await res.json()
+// 	Caddress = data;
+// 	info(Caddress);
+// }
 
 module.exports = {
 	FundingABI,

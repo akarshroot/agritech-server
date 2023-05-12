@@ -1,6 +1,8 @@
 require('dotenv').config()
 const solc = require("solc")
 const fs = require("fs");
+const path = require('path')
+// const file = require('@openzeppelin/contracts/token/ERC20/IERC20.sol')
 
 const fileAddress = __dirname+'/contracts/funding2.sol'
 const fileAddress2 = process.env.NODE_ENV!=='production'
@@ -8,7 +10,7 @@ const fileAddress2 = process.env.NODE_ENV!=='production'
 :"/home/jastagarbrar/agritech-server/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol"
 
 const readFile = fs.readFileSync(fileAddress,'utf8');
-const readFile2 = fs.readFileSync(fileAddress2,'utf8');
+const readFile2 = fs.readFileSync(path.join(__dirname, "../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol"),'utf8');
 
 function findImports(path) {
       return {
