@@ -47,6 +47,10 @@ const userSchema = new mongoose.Schema({
         default: () => Date.now(),
         immutable: true
     },
+    orders:[{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Order'
+    }],
     transactions: [{
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Transaction'

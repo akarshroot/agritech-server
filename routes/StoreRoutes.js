@@ -2,6 +2,10 @@ const { Router } = require("express");
 const Product = require("../models/Product");
 const { err } = require("../utils/logger");
 const Order = require("../models/Order");
+const User=require("../models/User");
+const {transferKCO}=require("../web3/web3Wallet");
+const {info}=require("console");
+const Transaction=require("../models/Transaction");
 
 const router = Router();
 
@@ -47,16 +51,32 @@ router.post("/order/create", async (req, res) => {
     try {
         const { userId, product, password } = req.body
         const order = await new Order({ product: req.body.product, user: req.body.userId }).save()
-        // CODE HERE useID prodId password
+        const ADMIN_USER = await User.findById('643aa85e905bd156f4c63a28')
+        const buyer = await User.findById(userId)
         const requiredProduct = await Product.findById(product)
         const price = requiredProduct.price
-        
-        
-
+        const txHash = await transferKCO(
+            buyer.walletAddress,
+            process.env.BACKEND_COINBASE_WALLET_ADDRESS,
+            price,
+            password
+        )
+        const tx = new Transaction({
+            senderId: userId,
+            receiverId: order._id,
+            amount:price,
+            txHash:txHash.transactionHash
+        })
+        const savedTx = await tx.save();
+        buyer.transactions.push(savedTx._id);
+        buyer.orders.push(order._id)
+        ADMIN_USER.transactions.push(savedTx._id);
+        await buyer.save();
+        await ADMIN_USER.save();
         res.status(200).json({error: false, message: "Order created!"})
     } catch (e) {
         err(e)
-        res.status(500).send()
+        res.status(500).json({ error: true, message: "Internal Server Error" })
     }
 })
 
