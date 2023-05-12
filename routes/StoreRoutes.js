@@ -45,7 +45,14 @@ router.get("/category/", async (req, res) => {
 
 router.post("/order/create", async (req, res) => {
     try {
+        const { userId, product, password } = req.body
         const order = await new Order({ product: req.body.product, user: req.body.userId }).save()
+        // CODE HERE useID prodId password
+        const requiredProduct = await Product.findById(product)
+        const price = requiredProduct.price
+        
+        
+
         res.status(200).json({error: false, message: "Order created!"})
     } catch (e) {
         err(e)

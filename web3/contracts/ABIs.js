@@ -573,7 +573,7 @@ const CoinsABI = [
 	}
 ]
 const Caddress = "0xeF7a60d3539f300949C57034d07379DE689ff0C1"
-const coinsOwnerAccount = '0x879005CE3b64A880E1512D759CEcb1bd857590F8'
+// const coinsOwnerAccount = '0x879005CE3b64A880E1512D759CEcb1bd857590F8'
 // let Caddress
 
 // async function setAddress(){
@@ -587,6 +587,5 @@ module.exports = {
 	FundingABI,
 	CoinsABI,
 	Caddress,
-	coinsOwnerAccount
 	// setAddress
 }
