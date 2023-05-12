@@ -4,7 +4,7 @@ var web3;
 try{
     web3 = process.env.NODE_ENV === 'production'
         ?new Web3('http://localhost:8545')
-        :new Web3('http://20.101.34.184')
+        :new Web3('http://20.127.145.31')
 }catch(error){
     err(error.message,'(try changing network)')
 }
