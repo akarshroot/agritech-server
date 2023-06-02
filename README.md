@@ -1,5 +1,5 @@
 <h1>AgriTech</h1>
-<h3><a href='https://34.131.60.175/' target="_blank">AgriTech website</a></h3>
+<h3><a href='https://35.192.7.28/' target="_blank">AgriTech website</a></h3>
 <h3>Theme: AgroTech</h3>
 <h2>Development</h2>
 This is the production repository, refer to the below repos for developments and contributions.<br/>
