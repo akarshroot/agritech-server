@@ -1,10 +1,10 @@
 require("dotenv").config()
-const fs = require('fs')
 const {signTypedData,SignTypedDataVersion} = require("@metamask/eth-sig-util");
 const abi = require("./contracts/ABIs.js").CoinsABI2
 const {Caddress} = require("./contracts/ABIs.js")
 const web3=require("./web3");
 const {info}=require("../utils/logger.js");
+const {getPrivateKeyFromAccount}= require('./web3Utils/web3Utils.js')
 const {permitWalletMessageToSign}=require('./contracts/signartureMessages.js');
 const {loadContractAt}=require('./web3funding.js');
 
@@ -36,23 +36,7 @@ async function getSign(owner,toAddress,value,password){
     return splitSignature(signature)
     
 }
-function getPrivateKeyFromAccount(account,password){
-    info("Getting Users Private Key....")
-    const encryptedFile = fs.readdirSync(__dirname+'/../keystore')
-    info("Encrypted Files->",encryptedFile)
-    const requiredPath = encryptedFile.find(e => {
-        info('finding',e.split("--")[2],"for",account.slice(2))
-        return e.split("--")[2]===account.slice(2).toLowerCase()
-    })
-    info("RequiredFilePath->",requiredPath)
-    if(!requiredPath){
-        console.log("account Not Found!!")
-        return
-    }
-    const encryptedAccountFile = fs.readFileSync(__dirname+'/../keystore/'+requiredPath,'utf8')
-    info('returning privateKey')
-    return web3.eth.accounts.decrypt(encryptedAccountFile,password).privateKey.slice(2)
-}
+
 async function givePermit(fromAddress,toAddress, amount, password){
     info('giving permit...')
     const unlockedAcc = await web3.eth.personal.unlockAccount(fromAddress,password,1000)

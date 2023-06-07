@@ -1,7 +1,7 @@
 const web3 = require('./web3.js')
 const { FundingABI2 } = require('./contracts/ABIs.js')
 const { info } = require("../utils/logger");
-const {getPrivateKeyFromAccount}=require('./web3permit.js');
+const {getPrivateKeyFromAccount}=require('./web3Utils/web3Utils.js');
 const {createRequestMessageToSign}=require('./contracts/signartureMessages.js');
 
 function loadContractAt(address) {

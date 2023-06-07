@@ -6,7 +6,7 @@ const {
 
 }=require("./contracts/signartureMessages");
 const {signTypedData,SignTypedDataVersion} = require("@metamask/eth-sig-util");
-const {getPrivateKeyFromAccount}=require("./web3permit");
+const {getPrivateKeyFromAccount}=require("./web3Utils/web3Utils.js");
 
 
 // const contract = new web3.eth.Contract(abi,Caddress)
