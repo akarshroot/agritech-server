@@ -1,46 +1,19 @@
-require("dotenv").config()
-const {signTypedData,SignTypedDataVersion} = require("@metamask/eth-sig-util");
 const abi = require("./contracts/ABIs.js").CoinsABI2
 const {Caddress} = require("./contracts/ABIs.js")
 const web3=require("./web3");
 const {info}=require("../utils/logger.js");
 const {getPrivateKeyFromAccount}= require('./web3Utils/web3Utils.js')
-const {permitWalletMessageToSign}=require('./contracts/signartureMessages.js');
 const {loadContractAt}=require('./web3funding.js');
+const {getSign}=require("./gettingWeb3RSV.js");
 
 
 const contract = new web3.eth.Contract(abi,Caddress)
-
-// const myPrivateKey = process.env.BACKEND_COINBASE_WALLET_PRIVATEKEY
-// const managerAcc = process.env.BACKEND_COINBASE_WALLET_ADDRESS
-const managerAcc = '0x04c3a9591730b0fb78f18a258520d8f23431f06c'
-
-function splitSignature(signature){
-    const r = signature.slice(0,66);
-    const s = "0x" + signature.slice(66,130);
-    const v = parseInt("0x" + signature.slice(130,132));
-    console.log("r:",r)
-    console.log("s:",s)
-    console.log("v:",v)
-    return {r,s,v}
-}
-async function getSign(owner,toAddress,value,password){
-    const nonce = await contract.methods.nonces(owner).call()
-    info(nonce);
-    const msgData = permitWalletMessageToSign(owner,toAddress,nonce,value)
-    const signature = signTypedData({
-        privateKey:getPrivateKeyFromAccount(owner,password),
-        data:msgData,
-        version: SignTypedDataVersion.V4,
-      });
-    return splitSignature(signature)
-    
-}
+const managerAcc = process.env.BACKEND_COINBASE_WALLET_ADDRESS
 
 async function givePermit(fromAddress,toAddress, amount, password){
     info('giving permit...')
     const unlockedAcc = await web3.eth.personal.unlockAccount(fromAddress,password,1000)
-	console.log(unlockedAcc)
+	info("unlockedACC",unlockedAcc)
 	if(unlockedAcc){
         info('getting Signature...')
         const {r,s,v} = await getSign(fromAddress,toAddress,amount,password)
@@ -52,7 +25,7 @@ async function givePermit(fromAddress,toAddress, amount, password){
     }
 }
 async function contributeIn(loadedContract, contributerAddress, amount) {
-    const unlocked = await web3.eth.personal.unlockAccount(managerAcc,"",1000)
+    const unlocked = await web3.eth.personal.unlockAccount(managerAcc,process.env.BACKEND_COINBASE_WALLET_PASSWORD,1000)
     info(unlocked)
     if (contract && unlocked) {
         const res = await loadedContract.methods.Contribute(amount,contributerAddress).send({
@@ -66,11 +39,11 @@ async function contributeIn(loadedContract, contributerAddress, amount) {
 }
 async function ContributeGasLessly(fromAddress,toAddress,amount,password){
     const permitTx = await givePermit(fromAddress,toAddress,amount,password);
-    console.log("Final permit-->", permitTx)
+    info("Final permit-->", permitTx)
     const thisContract = loadContractAt(toAddress);
     const contributionCalling = await contributeIn(thisContract,fromAddress,amount);
 
-    console.log("Contribution Calling--->",contributionCalling)
+    info("Contribution Calling--->",contributionCalling)
     return contributionCalling
 }
 module.exports = {

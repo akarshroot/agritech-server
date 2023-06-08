@@ -1,10 +1,11 @@
+const {info}=require('../../utils/logger')
 const {Caddress} = require('./ABIs')
 
 const EIP712Domain = [
-  {name: "name","type": "string"},
-  {name: "version","type": "string"},
-  {name: "chainId","type": "uint256"},
-  {name: "verifyingContract","type": "address"}
+  {name: "name",type: "string"},
+  {name: "version",type: "string"},
+  {name: "chainId",type: "uint256"},
+  {name: "verifyingContract",type: "address"}
 ]
 
 const ContractDomain = {
@@ -65,15 +66,20 @@ const contributeMessageToSign = (contractAddress,amount,sender) => {
     }}
 }
 const createRequestMessageToSign = (contractAddress,receiver,amount) => {
+    info("-----------------")
+    info("contractAddress",contractAddress)
+    info("receiver",receiver)
+    info("amount",amount)
+    info("-----------------")
     return {
-        types: {
-        EIP712Domain,
-        Creater: [
-          {name: "amount",type: "uint256"},
-          {name: "receiver",type: "address"}
-        ],
+      types: {
+      EIP712Domain,
+      CreateRequest: [
+        {name: "amount",type: "uint256"},
+        {name: "receiver",type: "address"}
+        ]
       },
-      primaryType: "Creater",
+      primaryType: "CreateRequest",
       domain: {
         ...ContractDomain,
         verifyingContract: contractAddress
@@ -83,40 +89,36 @@ const createRequestMessageToSign = (contractAddress,receiver,amount) => {
         receiver
       }}
 }
-const voteRequestMessageToSign = (contractAddress,number,sender) => {
+const voteRequestMessageToSign = (contractAddress,number) => {
     return {types: {
       EIP712Domain,
-      VoteIn: [
-        {name: "number",type: "uint256"},
-        {name: "sender",type: "address"}
+      VoteRequest: [
+        {name: "number",type: "uint256"}
       ],
     },
-    primaryType: "VoteIn",
+    primaryType: "VoteRequest",
     domain: {
       ...ContractDomain,
       verifyingContract: contractAddress
     },
     message: {
-      number,
-      sender
+      number
     }}
 }
-const transferToBuyMessageToSign = (contractAddress,number,sender) => {
+const transferToBuyMessageToSign = (contractAddress,number) => {
     return {types: {
       EIP712Domain,
-      UseReq: [
-          {name: "number",type: "uint256"},
-          {name: "sender",type: "address"}
-      ],
+      TransferToBuy: [
+          {name: "number",type: "uint256"}
+      ]
     },
-    primaryType: "UseReq",
+    primaryType: "TransferToBuy",
     domain: {
       ...ContractDomain,
       verifyingContract: contractAddress
     },
     message: {
-      number,
-      sender
+      number
     }}
 }
 

@@ -11,6 +11,9 @@ contract kissanFundContract2{
     uint public deadline;
     uint public minContribution;
     uint public noOfContributors;
+    uint public nonRefundedAmount = 0;
+    address[] public contributorsArray;
+
     struct EIP712Domain {
         string  name;
         string  version;
@@ -19,7 +22,6 @@ contract kissanFundContract2{
     }
 
     struct Request {
-        string reason;
         address receiver;
         uint amount;
         bool completed;
@@ -52,34 +54,30 @@ contract kissanFundContract2{
         
         manager = _owner;
         target = _target;
-        deadline = block.timestamp + _deadline;
+        deadline = _deadline;
         minContribution = _minContribution;
 
     }
-    
 
-    function hashR(uint256 amount,address sender) internal pure returns (bytes32) {
+    function hashR(uint256 amount,address receiver) internal pure returns (bytes32) {
         return keccak256(abi.encode(
-            keccak256("Creater(uint256 amount,address receiver)"),
+            keccak256("CreateRequest(uint256 amount,address receiver)"),
             amount,
-            sender
+            receiver
         ));
     }
-    function hashVR(uint256 number, address sender) internal pure returns (bytes32) {
+    function hashVR(uint256 number) internal pure returns (bytes32) {
         return keccak256(abi.encode(
-            keccak256("VoteIn(uint256 number,address sender)"),
-            number,
-            sender
+            keccak256("VoteRequest(uint256 number)"),
+            number
         ));
     }
-    function hashTR(uint256 number, address sender) internal pure returns (bytes32) {
+    function hashTR(uint256 number) internal pure returns (bytes32) {
         return keccak256(abi.encode(
-            keccak256("UseReq(uint256 number,address sender)"),
-            number,
-            sender
+            keccak256("TransferToBuy(uint256 number)"),
+            number
         ));
     }
-
 
     function verifyR(uint256 amount,address sender, uint8 v, bytes32 r, bytes32 s) internal view returns (bool) {
         bytes32 digest = keccak256(abi.encodePacked(
@@ -89,28 +87,29 @@ contract kissanFundContract2{
         ));
         return ecrecover(digest, v, r, s) == manager;
     }
-    function verifyVR(uint256 number,address sender, uint8 v, bytes32 r, bytes32 s) internal view returns (bool) {
+    function getVoterVR(uint256 number, uint8 v, bytes32 r, bytes32 s) internal view returns (address) {
         bytes32 digest = keccak256(abi.encodePacked(
             "\x19\x01",
             DOMAIN_SEPARATOR,
-            hashVR(number,sender)
+            hashVR(number)
         ));
-        return ecrecover(digest, v, r, s) == manager;
+        return ecrecover(digest, v, r, s);
     }
-    function verifyTR(uint256 number,address sender, uint8 v, bytes32 r, bytes32 s) internal view returns (bool) {
+    function verifyTR(uint256 number, uint8 v, bytes32 r, bytes32 s) internal view returns (bool) {
         bytes32 digest = keccak256(abi.encodePacked(
             "\x19\x01",
             DOMAIN_SEPARATOR,
-            hashTR(number,sender)
+            hashTR(number)
         ));
         return ecrecover(digest, v, r, s) == manager;
     }
 
     function Contribute(uint256 _tokenamount,address sender) public returns(bool) {
-    //     require(verifyC(_tokenamount,sender , v, r, s), "Invalid signature");
+        require(block.timestamp < deadline,"This contract has expired");
         require(_tokenamount >= minContribution, "Minimum contribution not met");
         token.transferFrom(sender,address(this), _tokenamount);
         if(contributors[sender] == 0){
+            contributorsArray.push(sender);
             noOfContributors++;
         }
         contributors[sender] += _tokenamount;
@@ -120,32 +119,45 @@ contract kissanFundContract2{
         return token.balanceOf(address(this));
     }
 
-
-
-    function CreateRequest(string memory reason ,address receiver, uint256 amount, uint8 v, bytes32 r, bytes32 s) public  {
+    function CreateRequest(address receiver, uint256 amount, uint8 v, bytes32 r, bytes32 s) public  {
+        require(block.timestamp < deadline,"This contract has expired");
         require(verifyR(amount,receiver, v, r, s), "Invalid signature");
         Request storage newReq = allRequests[numberOfRequests++];
-        newReq.reason = reason;
         newReq.amount = amount;
         newReq.receiver = receiver;
         newReq.numberOfVoters = 0;
     }
-    function VoteRequest(uint256 _reqNumber,address sender, uint8 v, bytes32 r, bytes32 s) public {
-        require(verifyVR(_reqNumber,sender, v, r, s), "Invalid signature");
-        require(contributors[sender]>0,"You are not a Contributor, so you cannot vote");
+    function VoteRequest(uint256 _reqNumber, uint8 v, bytes32 r, bytes32 s) public {
+        require(block.timestamp < deadline,"This contract has expired");
+        address sender = getVoterVR(_reqNumber, v, r, s);
+        require(contributors[sender]>0,"You are not a Contributor, so you cannot vote or you have an invalid Signature");
         Request storage thisRequest = allRequests[_reqNumber];
         require(thisRequest.voters[sender] == false, "You have already voted!!");
         thisRequest.voters[sender] = true;
         thisRequest.numberOfVoters++;
     }
-    function TransferToBuy(uint256 _reqNumber,address sender,uint8 v, bytes32 r, bytes32 s) public returns(bool){
-        require(verifyTR(_reqNumber,sender, v, r, s), "Invalid signature");
+    function TransferToBuy(uint256 _reqNumber,uint8 v, bytes32 r, bytes32 s) public returns(bool){
+        require(verifyTR(_reqNumber, v, r, s), "Invalid signature");
         Request storage thisRequest = allRequests[_reqNumber];
         require(thisRequest.numberOfVoters >= (noOfContributors/2), "50% or more Votes are not met (Insufficient Votes)");
 
         token.transfer(thisRequest.receiver,thisRequest.amount);
         thisRequest.completed = true;
         return true;
+    }
+
+    function refund() public{
+        uint feeAmount = 1;
+        for(uint i=0;i<contributorsArray.length;i++){
+            address receiver = contributorsArray[i];
+            uint amountToSend = contributors[receiver];
+            if(amountToSend>=feeAmount){
+                token.transfer(receiver,amountToSend-feeAmount);
+                contributors[receiver] = 0;
+                noOfContributors--;
+            }
+        }
+        token.transfer(msg.sender,GetContractTokenBalance());
     }
 
 }

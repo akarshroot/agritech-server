@@ -1,4 +1,3 @@
-require('dotenv').config()
 const web3 = require('./web3')
 const ABI = require("./compile.js").compiledABI
 const bytecode = require("./compile.js").compiledByteCode
@@ -21,7 +20,7 @@ async function deployContract(account,password, target,deadline,minContribution)
         const estimateGasFee = await preDeploy.estimateGas()*2
         
         info("Predicted fee -->",estimateGasFee)
-        const deployedContract = await preDeploy.send({ from: '0x04c3a9591730b0fb78f18a258520d8f23431f06c', gas:estimateGasFee })
+        const deployedContract = await preDeploy.send({ from: process.env.BACKEND_COINBASE_WALLET_ADDRESS, gas:estimateGasFee })
         info(deployedContract._address)
         return deployedContract
     }else{

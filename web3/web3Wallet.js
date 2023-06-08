@@ -1,15 +1,13 @@
-const dotenv = require("dotenv")
 const web3 = require('./web3')
 const abi = require("./contracts/ABIs.js").CoinsABI2
 const { Caddress } = require("./contracts/ABIs.js")
 const { info } = require("../utils/logger");
 
-dotenv.config()
 
 const contract = new web3.eth.Contract(abi, Caddress)
 
 const managerAcc = process.env.BACKEND_COINBASE_WALLET_ADDRESS
-info(managerAcc)
+// info(managerAcc)
 
 async function getBalance(accountAddress) {
 	let bal = await contract.methods.balanceOf(accountAddress).call()

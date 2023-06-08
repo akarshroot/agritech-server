@@ -19,6 +19,7 @@ web3RouterVoting.post('/makeRequest',auth, async (req,res) => {
     
     const {reason,receiverProduct,amount,campaignId,password} = req.body
     const campaignData = await Campaign.findById(campaignId);
+    info("-->" ,campaignData)
     const user = await User.findById(req.user._id);
     let dataFormed;
     let product;
@@ -41,9 +42,8 @@ web3RouterVoting.post('/makeRequest',auth, async (req,res) => {
         }
     }
     try{
-        const contract = loadContractAt(campaignData.address);
-        initateVoteReq(contract,user.walletAddress,dataFormed.receiver,dataFormed.amount,dataFormed.reason,password)
-        
+        await initateVoteReq(campaignData.address,user.walletAddress,dataFormed.receiver,dataFormed.amount,dataFormed.reason,password)
+        info("initated a Vote Request")
         const voteNumberBylen = campaignData.voteRequests.length
         const voteData = {
             reason,
@@ -54,12 +54,14 @@ web3RouterVoting.post('/makeRequest',auth, async (req,res) => {
         }
         campaignData.voteRequests.push(voteData)
         await campaignData.save()
-        res.json({
+        info('sending Success')
+        res.status(200).json({
+            error:false,
             status:'Success',
             message:'Request for Withdraw Created'
         })
     }catch(error){
-        err(error.message)
+        err(error)
         res.status(400).json({
             error: true,
             status:'Failed to create req',
@@ -72,7 +74,7 @@ web3RouterVoting.post('/vote',auth,async (req, res) => {
     const {voteNumber, password,cid,vote} = req.body
     const user = await User.findById(req.user._id)
     const campaignDetails = await Campaign.findById(cid)
-    const contract = loadContractAt(campaignDetails.address);
+    
     if(vote==='dontAllow'){
         campaignDetails.contributors[user._id].deniedRequests.push(voteNumber)
         await campaignDetails.save()
@@ -83,7 +85,7 @@ web3RouterVoting.post('/vote',auth,async (req, res) => {
         return
     }
     try{
-        const response = await voteInReq(contract,voteNumber,user.walletAddress,password)
+        await voteInReq(campaignDetails.address,voteNumber,user.walletAddress,password)
         campaignDetails.voteRequests[voteNumber-1].votes+=1
         await campaignDetails.save()
         res.json({
@@ -112,8 +114,7 @@ web3RouterVoting.post("/useRequestedMoney",auth,async (req,res) => {
         return
     }
     try{
-        const contract = loadContractAt(campaignData.address)
-        const response = await activateRequest(contract, user.walletAddress, voteNumber,password)
+        const response = await activateRequest(campaignData.address, user.walletAddress, voteNumber,password)
         info(response)
         const tx = new Transaction({
             senderId:campaignData._id,

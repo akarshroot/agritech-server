@@ -1,8 +1,7 @@
 const web3 = require('./web3.js')
 const { FundingABI2 } = require('./contracts/ABIs.js')
 const { info } = require("../utils/logger");
-const {getPrivateKeyFromAccount}=require('./web3Utils/web3Utils.js');
-const {createRequestMessageToSign}=require('./contracts/signartureMessages.js');
+const {getSignR, getSignVR, getSignTR}=require('./gettingWeb3RSV.js');
 
 function loadContractAt(address) {
     const findcontract = new web3.eth.Contract(FundingABI2, address)
@@ -17,25 +16,15 @@ async function getRaisedAmount(contract) {
         return 'No Contract selected'
     }
 }
-
-async function getSignR(contractAddress,toAddress,value,signer,password){
-	const msgData = createRequestMessageToSign(contractAddress,toAddress,value)
-  const signature1 = signTypedData({
-      privateKey:getPrivateKeyFromAccount(signer,password),
-      data:msgData,
-      version: SignTypedDataVersion.V4,
-    });
-    return splitSignature(signature1)
-    
-}
 // initiate VoteReq
-async function initateVoteReq(contract, fromAddress, toAddess, amount, reason, password) {
-    const Amount = amount
+async function initateVoteReq(cAddress, fromAddress, toAddess, amount, reason, password) {
+    const contract = loadContractAt(cAddress)
     const unlocked = await web3.eth.personal.unlockAccount(process.env.BACKEND_COINBASE_WALLET_ADDRESS, process.env.BACKEND_COINBASE_WALLET_PASSWORD, 1000)
     info(unlocked)
     if (contract && unlocked) {
-        const {r,s,v} = getSignR(contract._address,toAddess,amount,fromAddress,password);
-        const response = await contract.methods.createRequest(reason, toAddess, Amount,v,r,s).send({
+        const {r,s,v} = await getSignR(cAddress,toAddess,amount,fromAddress,password);
+        info("Got RSV")
+        const response = await contract.methods.CreateRequest(toAddess, amount,v,r,s).send({
             from: process.env.BACKEND_COINBASE_WALLET_ADDRESS
         })
         info("Vote Res->", response)
@@ -45,12 +34,14 @@ async function initateVoteReq(contract, fromAddress, toAddess, amount, reason, p
     }
 }
 // vote in certain req
-async function voteInReq(contract, reqNumber, fromAddress, password) {
-    const unlocked = await web3.eth.personal.unlockAccount(fromAddress, password, 1000)
+async function voteInReq(cAddress, reqNumber, voter, password) {
+    const contract = loadContractAt(cAddress);
+    const unlocked = await web3.eth.personal.unlockAccount(process.env.BACKEND_COINBASE_WALLET_ADDRESS,process.env.BACKEND_COINBASE_WALLET_PASSWORD, 1000)
     info(unlocked)
     if (contract && unlocked) {
-        const response = await contract.methods.voteRequest(reqNumber).send({
-            from: fromAddress
+        const {r,s,v} = await getSignVR(cAddress,reqNumber,voter,password);//contractAddress,vote number,voter,password
+        const response = await contract.methods.VoteRequest(reqNumber,v,r,s).send({
+            from: process.env.BACKEND_COINBASE_WALLET_ADDRESS
         })
         info("Voted->", response)
         return response
@@ -60,12 +51,14 @@ async function voteInReq(contract, reqNumber, fromAddress, password) {
 
 }
 // withdraw from activeRequest
-async function activateRequest(contract, fromAddress, reqNumber, password) {
-    const unlocked = await web3.eth.personal.unlockAccount(fromAddress, password, 1000)
+async function activateRequest(cAddress, owner, reqNumber, password) {
+    const contract = loadContractAt(cAddress)
+    const unlocked = await web3.eth.personal.unlockAccount(process.env.BACKEND_COINBASE_WALLET_ADDRESS,process.env.BACKEND_COINBASE_WALLET_PASSWORD, 1000)
     info(unlocked)
     if (contract && unlocked) {
-        const response = await contract.methods.transferToBuy(parseInt(reqNumber) - 1).send({
-            from: fromAddress
+        const {r,s,v} = await getSignTR(cAddress,parseInt(reqNumber) - 1,owner,password)
+        const response = await contract.methods.TransferToBuy(parseInt(reqNumber) - 1,v,r,s).send({
+            from: process.env.BACKEND_COINBASE_WALLET_ADDRESS
         })
         info("Status->", response)
         return response
