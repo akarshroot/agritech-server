@@ -1,18 +1,12 @@
-require('dotenv').config()
 const solc = require("solc")
 const fs = require("fs");
 const path = require('path')
-// const file = require('@openzeppelin/contracts/token/ERC20/IERC20.sol')
 
-const fileAddress = __dirname+'/contracts/funding2.sol'
-const fileAddress2 = process.env.NODE_ENV!=='production'
-?__dirname+'../../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol'
-:"/home/jastagarbrar/agritech-server/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol"
 
-const readFile = fs.readFileSync(fileAddress,'utf8');
+const readFile = fs.readFileSync(__dirname+'/contracts/funding2.sol','utf8');
 const readFile2 = fs.readFileSync(path.join(__dirname, "../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol"),'utf8');
 
-function findImports(path) {
+function findImports() {
       return {
         contents:
           readFile2
@@ -36,10 +30,9 @@ var input = {
 };
 
 const output = JSON.parse(solc.compile(JSON.stringify(input), { import: findImports }));
-// info(output)
-const outputContract = output.contracts['funding2.sol'].kissanFundContract
+const outputContract = output.contracts['funding2.sol'].kissanFundContract2
 
 module.exports = {
-    compiledAPi:      outputContract.abi,
+    compiledABI:      outputContract.abi,
     compiledByteCode: outputContract.evm.bytecode.object
 }
