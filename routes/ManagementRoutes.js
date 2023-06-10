@@ -15,7 +15,7 @@ router.post("/plan/create", auth, async (req, res) => {
         data.requirements.forEach(item => {
             data.estCost += item.estCost * item.quantity
             if (item.estSale)
-                data.estRevenue += item.estSale * item.quantity
+                data.estRevenue += item.estSale * item.quantity * item.yield
         });
         const plan = await Plan(data).save()
         if (plan)
@@ -62,6 +62,11 @@ router.post("/plan/execute", auth, async (req, res) => {
     try {
         const pid = req.body.planId
         const userId = req.body.user
+        const user = await User.findOne({ _id: userId })
+        if(user.currentPlan != undefined) {
+            res.status(400).json({error: true, message: "One plan is already under execution!"})
+            return
+        }
         const endDate = new Date()
         const getplan = await Plan.findOne({ _id: pid })
         endDate.setMonth(endDate.getMonth() + getplan.duration)
@@ -98,7 +103,7 @@ router.get("/inventory/all", auth, async (req, res) => {
         const inventory = await Inventory.find({ ownerId: uid })
         if (inventory) {
             let total = 0;
-            inventory.forEach(i => total += i.estCost*i.quantity)
+            inventory.forEach(i => total += i.estCost * i.quantity)
             res.status(200).json({ error: false, data: inventory, totalValue: total })
         }
         else res.status(500).json({ error: true, message: "Could not find any plans." })
@@ -112,8 +117,8 @@ router.post("/inventory/use", auth, async (req, res) => {
     try {
         const itemId = req.body.itemId
         const usedQuantity = req.body.used
-        const inventory = await Inventory.findOneAndUpdate({ _id: itemId }, { $inc: { quantity: -1*usedQuantity} }, {new: true})
-        if(inventory.quantity < 0 || inventory.quantity === 0) await Inventory.findOneAndDelete({_id: itemId})
+        const inventory = await Inventory.findOneAndUpdate({ _id: itemId }, { $inc: { quantity: -1 * usedQuantity } }, { new: true })
+        if (inventory.quantity < 0 || inventory.quantity === 0) await Inventory.findOneAndDelete({ _id: itemId })
         if (inventory)
             res.status(200).json({ error: false, message: "Inventory updated." })
         else res.status(500).json({ error: true, message: "Could not find any plans." })

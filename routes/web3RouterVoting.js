@@ -79,6 +79,7 @@ web3RouterVoting.post('/vote',auth,async (req, res) => {
         campaignDetails.contributors[user._id].deniedRequests.push(voteNumber)
         await campaignDetails.save()
         res.json({
+            error: false,
             status:"Success",
             message:"voted"
         })
@@ -89,12 +90,14 @@ web3RouterVoting.post('/vote',auth,async (req, res) => {
         campaignDetails.voteRequests[voteNumber-1].votes+=1
         await campaignDetails.save()
         res.json({
+            error: false,
             status:"Success",
             message:"voted"
         })
     }catch(error){
         err(error.message)
         res.json({
+            error: true,
             status:"Failed to vote",
             message:error.message
         })
@@ -108,6 +111,7 @@ web3RouterVoting.post("/useRequestedMoney",auth,async (req,res) => {
     const reciverUser = await User.findById(campaignData.voteRequests[voteNumber-1].receiver)
     if(campaignData.voteRequests[voteNumber-1].votes ===0){
         res.json({
+            error: true,
             status:"Failed to use Req",
             message:"No one has Voted yet"
         })
@@ -128,12 +132,14 @@ web3RouterVoting.post("/useRequestedMoney",auth,async (req,res) => {
         await campaignData.save()
         await reciverUser.save()
         res.json({
+            error: false,
             status:"Success",
             message:"Request used, purchase successfull"
         })
     }catch(error){
         err(error.message)
         res.json({
+            error: true,
             status:"Failed to use Req",
             message:error.message
         })
