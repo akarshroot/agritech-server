@@ -1,7 +1,12 @@
 
-const FundingABI = [
+const FundingABI2 = [
 	{
 		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_owner",
+				"type": "address"
+			},
 			{
 				"internalType": "uint256",
 				"name": "_target",
@@ -22,16 +27,60 @@ const FundingABI = [
 		"type": "constructor"
 	},
 	{
-		"inputs": [],
-		"name": "GetAllowance",
-		"outputs": [
+		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "",
+				"name": "_tokenamount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
 			}
 		],
-		"stateMutability": "view",
+		"name": "Contribute",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "receiver",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "v",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "r",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "s",
+				"type": "bytes32"
+			}
+		],
+		"name": "CreateRequest",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -48,16 +97,65 @@ const FundingABI = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "GetUserTokenBalance",
-		"outputs": [
+		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "",
+				"name": "_reqNumber",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "v",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "r",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "s",
+				"type": "bytes32"
 			}
 		],
-		"stateMutability": "view",
+		"name": "TransferToBuy",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_reqNumber",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "v",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "r",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "s",
+				"type": "bytes32"
+			}
+		],
+		"name": "VoteRequest",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -70,11 +168,6 @@ const FundingABI = [
 		],
 		"name": "allRequests",
 		"outputs": [
-			{
-				"internalType": "string",
-				"name": "reason",
-				"type": "string"
-			},
 			{
 				"internalType": "address",
 				"name": "receiver",
@@ -102,25 +195,6 @@ const FundingABI = [
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "_tokenamount",
-				"type": "uint256"
-			}
-		],
-		"name": "contribute",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -140,24 +214,20 @@ const FundingABI = [
 	{
 		"inputs": [
 			{
-				"internalType": "string",
-				"name": "_reason",
-				"type": "string"
-			},
-			{
-				"internalType": "address",
-				"name": "_receiver",
-				"type": "address"
-			},
-			{
 				"internalType": "uint256",
-				"name": "_amount",
+				"name": "",
 				"type": "uint256"
 			}
 		],
-		"name": "createRequest",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"name": "contributorsArray",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -214,6 +284,19 @@ const FundingABI = [
 	},
 	{
 		"inputs": [],
+		"name": "nonRefundedAmount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "numberOfRequests",
 		"outputs": [
 			{
@@ -223,6 +306,13 @@ const FundingABI = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "refund",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -237,41 +327,9 @@ const FundingABI = [
 		],
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_reqNumber",
-				"type": "uint256"
-			}
-		],
-		"name": "transferToBuy",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_reqNumber",
-				"type": "uint256"
-			}
-		],
-		"name": "voteRequest",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	}
 ]
-const CoinsABI = [
+const CoinsABI2 = [
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
@@ -378,6 +436,49 @@ const CoinsABI = [
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "deadline",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "v",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "r",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "s",
+				"type": "bytes32"
+			}
+		],
+		"name": "permit",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "to",
 				"type": "address"
 			},
@@ -442,6 +543,35 @@ const CoinsABI = [
 			}
 		],
 		"name": "transferFrom",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "transferWithPermit",
 		"outputs": [
 			{
 				"internalType": "bool",
@@ -534,12 +664,44 @@ const CoinsABI = [
 	},
 	{
 		"inputs": [],
+		"name": "DOMAIN_SEPARATOR",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "name",
 		"outputs": [
 			{
 				"internalType": "string",
 				"name": "",
 				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "nonces",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -572,20 +734,12 @@ const CoinsABI = [
 		"type": "function"
 	}
 ]
-const Caddress = "0xeF7a60d3539f300949C57034d07379DE689ff0C1"
-// const coinsOwnerAccount = '0x879005CE3b64A880E1512D759CEcb1bd857590F8'
-// let Caddress
-
-// async function setAddress(){
-// 	res = await fetch('https://asia-south1-kissanblockchain.cloudfunctions.net/cAddressFunction')
-// 	const {data} = await res.json()
-// 	Caddress = data;
-// 	info(Caddress);
-// }
+const Caddress = "0x8f13012ef2869c33dcB260bcc498C8eC9A593691"
+const coinsOwnerAccount = process.env.BACKEND_COINBASE_WALLET_ADDRESS
 
 module.exports = {
-	FundingABI,
-	CoinsABI,
+	FundingABI2,
+	CoinsABI2,
 	Caddress,
 	// setAddress
 }

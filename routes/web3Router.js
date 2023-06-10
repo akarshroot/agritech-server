@@ -1,7 +1,9 @@
 const auth=require("../middleware/auth")
 const Transaction=require("../models/Transaction")
 const User=require("../models/User")
-const {getBalance, transferKCO}=require("../web3/web3Wallet")
+const {info}=require("../utils/logger")
+const {getBalance, transferFromKCO}=require("../web3/web3Wallet")
+const givePermit=require("../web3/web3permit")
 
 const web3Router = require("express").Router()
 
@@ -15,8 +17,16 @@ web3Router.post("/transfer", auth,async (req,res) => {
     const user = await User.findById(req.user._id);
     const data = req.body
     const receiver = await User.findOne({walletAddress: data.addressTo})
+    info("usersFound")
     try{
-        const txHash = await transferKCO(
+        info("Asking for Permit...")
+        const getPermit = await givePermit(
+            data.addressFrom,
+            data.amount,
+            data.password
+        )
+        info("Permit-->",getPermit)
+        const txHash = await transferFromKCO(
             data.addressFrom,
             data.addressTo,
             data.amount,
