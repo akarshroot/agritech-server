@@ -309,7 +309,13 @@ const FundingABI2 = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "feeAmount",
+				"type": "uint256"
+			}
+		],
 		"name": "refund",
 		"outputs": [],
 		"stateMutability": "nonpayable",
@@ -735,7 +741,6 @@ const CoinsABI2 = [
 	}
 ]
 const Caddress = "0x8f13012ef2869c33dcB260bcc498C8eC9A593691"
-const coinsOwnerAccount = process.env.BACKEND_COINBASE_WALLET_ADDRESS
 
 module.exports = {
 	FundingABI2,

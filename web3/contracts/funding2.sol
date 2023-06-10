@@ -146,8 +146,7 @@ contract kissanFundContract2{
         return true;
     }
 
-    function refund() public{
-        uint feeAmount = 1;
+    function refund(uint256 feeAmount) public{
         for(uint i=0;i<contributorsArray.length;i++){
             address receiver = contributorsArray[i];
             uint amountToSend = contributors[receiver];
