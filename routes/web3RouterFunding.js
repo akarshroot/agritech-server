@@ -55,7 +55,7 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
     try{
         const data = req.body
         const manager = await User.findById(data.userId)
-        const expire = Math.floor(+new Date() / 1000)+parseInt(data.deadline)
+        const expire = data.deadline
         const contract = await deployContract(
             data.walletAddress,
             data.password,

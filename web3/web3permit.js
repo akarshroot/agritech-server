@@ -11,14 +11,11 @@ const contract = new web3.eth.Contract(abi,Caddress)
 const managerAcc = process.env.BACKEND_COINBASE_WALLET_ADDRESS
 
 async function givePermit(fromAddress,toAddress, amount, password){
-    info('giving permit...')
     const unlockedAcc = await web3.eth.personal.unlockAccount(fromAddress,password,1000)
-	info("unlockedACC",unlockedAcc)
+    const deadlineForConfirmingPermit = "1000000000"
 	if(unlockedAcc){
-        info('getting Signature...')
         const {r,s,v} = await getSign(fromAddress,toAddress,amount,password)
-        info('Signature Got',r,s,v)
-		const permit = contract.methods.permit(fromAddress,toAddress,amount,'10000000000',v,r,s).send({
+		const permit = contract.methods.permit(fromAddress,toAddress,amount,deadlineForConfirmingPermit,v,r,s).send({
             from:managerAcc
         })
         return permit
