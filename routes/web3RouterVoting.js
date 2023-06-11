@@ -4,7 +4,7 @@ const Product=require('../models/Product')
 const User=require('../models/User')
 const Transaction=require('../models/Transaction')
 const {err, info}=require('../utils/logger')
-const {initateVoteReq, loadContractAt, voteInReq, activateRequest}=require('../web3/web3funding')
+const {initateVoteReq, voteInReq, activateRequest}=require('../web3/web3funding')
 
 const web3RouterVoting = require('express').Router()
 
@@ -108,7 +108,14 @@ web3RouterVoting.post("/useRequestedMoney",auth,async (req,res) => {
     const {voteNumber, password,cid} = req.body
     const user = await User.findById(req.user._id)
     const campaignData = await Campaign.findById(cid)
-    const reciverUser = await User.findById(campaignData.voteRequests[voteNumber-1].receiver)
+    info('ReceiverUser->',campaignData.voteRequests[voteNumber-1].receiver)
+    const voteNumberReciever = campaignData.voteRequests[voteNumber-1].receiver
+    let receiverDest = await Product.findById(voteNumberReciever)
+    let isProduct = true;
+    if(!receiverDest._id){
+        receiverDest = await User.findById(voteNumberReciever)
+        isProduct = false;
+    }
     if(campaignData.voteRequests[voteNumber-1].votes ===0){
         res.json({
             error: true,
@@ -122,22 +129,22 @@ web3RouterVoting.post("/useRequestedMoney",auth,async (req,res) => {
         info(response)
         const tx = new Transaction({
             senderId:campaignData._id,
-            receiverId:reciverUser._id,
+            receiverId:receiverDest._id,
             amount:campaignData.voteRequests[voteNumber-1].amount,
             txHash:response.transactionHash,
         })
         const savedTx = await tx.save()
         campaignData.campaignTransactions.push(savedTx._id);// also need to add this to the user
-        reciverUser.transactions.push(savedTx._id);
+        !isProduct && receiverDest.transactions.push(savedTx._id);
         await campaignData.save()
-        await reciverUser.save()
+        await receiverDest.save()
         res.json({
             error: false,
             status:"Success",
             message:"Request used, purchase successfull"
         })
     }catch(error){
-        err(error.message)
+        err(error)
         res.json({
             error: true,
             status:"Failed to use Req",

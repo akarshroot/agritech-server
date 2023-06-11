@@ -16,7 +16,8 @@ function getPrivateKeyFromAccount(account,password){
     }
     const encryptedAccountFile = fs.readFileSync(__dirname+'/../../keystore/'+requiredPath,'utf8')
     info('returning privateKey')
-    return web3.eth.accounts.decrypt(encryptedAccountFile,password).privateKey.slice(2)
+    const key = web3.eth.accounts.decrypt(encryptedAccountFile,password).privateKey.slice(2)
+    info('Key--->',key)
+    return key
 }
-
 module.exports = {getPrivateKeyFromAccount}

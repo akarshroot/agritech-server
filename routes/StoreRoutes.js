@@ -3,9 +3,9 @@ const Product = require("../models/Product");
 const { err } = require("../utils/logger");
 const Order = require("../models/Order");
 const User=require("../models/User");
-const {transferKCO}=require("../web3/web3Wallet");
 const {info}=require("console");
 const Transaction=require("../models/Transaction");
+const {TransferGaslessLy}=require("../web3/web3permit");
 
 const router = Router();
 
@@ -55,7 +55,7 @@ router.post("/order/create", async (req, res) => {
         const buyer = await User.findById(userId)
         const requiredProduct = await Product.findById(product)
         const price = requiredProduct.price
-        const txHash = await transferKCO(
+        const txHash = await TransferGaslessLy(
             buyer.walletAddress,
             process.env.BACKEND_COINBASE_WALLET_ADDRESS,
             price,
