@@ -12,7 +12,7 @@ const web3RouterFunding = require("express").Router()
 
 web3RouterFunding.get("/:cid", async (req, res) => {
     try {
-        const contractraw = await Campaign.findById(req.params.cid).populate(['manager','campaignTransactions'])
+        const contractraw = await Campaign.findById(req.params.cid).populate(['manager','campaignTransactions','associatedPlan'])
         const contract = loadContractAt(contractraw.address);
         const raisedAmount = await getRaisedAmount(contract);
 
