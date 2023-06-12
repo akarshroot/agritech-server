@@ -2,8 +2,8 @@ const auth=require("../middleware/auth")
 const Transaction=require("../models/Transaction")
 const User=require("../models/User")
 const {info}=require("../utils/logger")
-const {getBalance, transferFromKCO}=require("../web3/web3Wallet")
-const givePermit=require("../web3/web3permit")
+const {getBalance}=require("../web3/web3Wallet")
+const {TransferGaslessLy}=require("../web3/web3permit")
 
 const web3Router = require("express").Router()
 
@@ -20,13 +20,7 @@ web3Router.post("/transfer", auth,async (req,res) => {
     info("usersFound")
     try{
         info("Asking for Permit...")
-        const getPermit = await givePermit(
-            data.addressFrom,
-            data.amount,
-            data.password
-        )
-        info("Permit-->",getPermit)
-        const txHash = await transferFromKCO(
+        const txHash = await TransferGaslessLy(
             data.addressFrom,
             data.addressTo,
             data.amount,
@@ -48,6 +42,7 @@ web3Router.post("/transfer", auth,async (req,res) => {
             message:'Transfer Complete'
         })
     }catch(error){
+        console.log(error)
         res.json({
             status:'Failed',
             message:error.message

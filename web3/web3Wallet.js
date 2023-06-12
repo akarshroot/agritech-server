@@ -2,7 +2,7 @@ const web3 = require('./web3')
 const abi = require("./contracts/ABIs.js").CoinsABI2
 const { Caddress } = require("./contracts/ABIs.js")
 const { info } = require("../utils/logger");
-
+const keythereum = require('keythereum');
 
 const contract = new web3.eth.Contract(abi, Caddress)
 
@@ -30,11 +30,15 @@ async function transferKCO(fromAddress, toAddress, amount, password) {
 }
 
 async function transferFromKCO(fromAddress, toAddress, amount, password) {
-	const unlockedAcc = await web3.eth.personal.unlockAccount(fromAddress, password, 300)
+	const unlockedAcc = await web3.eth.personal.unlockAccount(managerAcc, process.env.BACKEND_COINBASE_WALLET_PASSWORD, 1000)
 	info(unlockedAcc)
-	showAllowance(fromAddress, toAddress, password)
+	await showAllowance(fromAddress, toAddress, password)
 	if (unlockedAcc) {
-		const res = await contract.methods.transferWithPermit(fromAddress, toAddress,amount).send({
+		info('Transfering...')
+		// info('from',fromAddress)
+		// info('to',toAddress)
+		// info('amount',amount)
+		const res = await contract.methods.transferFromPermit(fromAddress, toAddress,amount).send({
             from:managerAcc
         })
 		const { transactionHash } = res
@@ -78,8 +82,22 @@ async function showAllowance(fromAddress, toAddress, password) {
 
 
 async function addAccount(password) {
+	const options = {
+		kdf: 'pbkdf2',
+		cipher: 'aes-128-ctr',
+		kdfparams: {
+		  c: 262144,
+		  dklen: 32,
+		  prf: 'hmac-sha256'
+		}
+	  };
 	const newPrivateKey = web3.eth.accounts.create().privateKey.substr(2)
+	info("This newPrivateKey is the required->",newPrivateKey)
+	const keykey = Buffer.from(newPrivateKey,'hex')
+	const dk = keythereum.create()
 	const res = await web3.eth.personal.importRawKey(newPrivateKey, password) //private key and password
+	const keystoref = keythereum.dump(password,keykey,dk.salt, dk.iv , options);
+	keythereum.exportToFile(keystoref,'../keystore');
 	return res
 }
 

@@ -3,9 +3,6 @@ const ABI = require("./compile.js").compiledABI
 const bytecode = require("./compile.js").compiledByteCode
 const {info}=require("../utils/logger");
 
-// info(ABI)
-// const managerAcc = process.env.BACKEND_COINBASE_WALLET_ADDRESS
-// info(managerAcc)
 const contract = new web3.eth.Contract(ABI);
 
 async function deployContract(account,password, target,deadline,minContribution){

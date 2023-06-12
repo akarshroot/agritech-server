@@ -29,7 +29,7 @@ contract kissanFundContract2{
         uint numberOfVoters;
     }
 
-    IERC20 token = IERC20(0x8f13012ef2869c33dcB260bcc498C8eC9A593691);
+    IERC20 token = IERC20(0x1F26A75215E616B604023627985E15b5a5732De3);
     mapping(uint => Request) public allRequests;
     uint public numberOfRequests;
     bytes32 DOMAIN_SEPARATOR;
@@ -146,8 +146,7 @@ contract kissanFundContract2{
         return true;
     }
 
-    function refund() public{
-        uint feeAmount = 1;
+    function refund(uint256 feeAmount) public{
         for(uint i=0;i<contributorsArray.length;i++){
             address receiver = contributorsArray[i];
             uint amountToSend = contributors[receiver];
