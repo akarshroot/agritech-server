@@ -68,13 +68,15 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
             address: contract._address,
             target: data.target,
             deadline: expire,
+            description: {
+                content:data.description
+            },
             minContri: data.minContribution,
             date: new Date(),
-            manager: manager._id
+            manager: manager._id,
+            associatedPlan: data.associatedPlan
         })
         const saved = await newContractModel.save()
-        info("Expire-->",expire)
-        // info("Expire-->",Math.floor(+new Date() / 1000))
         schduleRefundCall(expire,contract._address)
         res.status(200).json({
             status: "Deployed Successfully",

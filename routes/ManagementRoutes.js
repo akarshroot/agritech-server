@@ -29,7 +29,7 @@ router.post("/plan/create", auth, async (req, res) => {
 
 router.get("/plan/all", auth, async (req, res) => {
     try {
-        const uid = req.query.user
+        const uid = req.user._id
         const plan = await Plan.find({ createdBy: uid })
         if (plan)
             res.status(200).json({ error: false, data: plan })
