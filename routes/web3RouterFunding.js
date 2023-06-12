@@ -12,7 +12,7 @@ const web3RouterFunding = require("express").Router()
 
 web3RouterFunding.get("/:cid", async (req, res) => {
     try {
-        const contractraw = await Campaign.findById(req.params.cid).populate(['manager','campaignTransactions'])
+        const contractraw = await Campaign.findById(req.params.cid).populate(['manager','campaignTransactions','associatedPlan'])
         const contract = loadContractAt(contractraw.address);
         const raisedAmount = await getRaisedAmount(contract);
 
@@ -68,13 +68,15 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
             address: contract._address,
             target: data.target,
             deadline: expire,
+            description: {
+                content:data.description
+            },
             minContri: data.minContribution,
             date: new Date(),
-            manager: manager._id
+            manager: manager._id,
+            associatedPlan: data.associatedPlan
         })
         const saved = await newContractModel.save()
-        info("Expire-->",expire)
-        // info("Expire-->",Math.floor(+new Date() / 1000))
         schduleRefundCall(expire,contract._address)
         res.status(200).json({
             status: "Deployed Successfully",

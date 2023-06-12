@@ -139,6 +139,7 @@ contract kissanFundContract2{
     function TransferToBuy(uint256 _reqNumber,uint8 v, bytes32 r, bytes32 s) public returns(bool){
         require(verifyTR(_reqNumber, v, r, s), "Invalid signature");
         Request storage thisRequest = allRequests[_reqNumber];
+        require(thisRequest.completed==false,"This request has already been used");
         require(thisRequest.numberOfVoters >= (noOfContributors/2), "50% or more Votes are not met (Insufficient Votes)");
 
         token.transfer(thisRequest.receiver,thisRequest.amount);

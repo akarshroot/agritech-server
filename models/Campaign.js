@@ -6,9 +6,12 @@ const contractSchema = new mongoose.Schema({
     target:Number,
     deadline:Number,
     minContri:Number,
+    associatedPlan:{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Plan'
+    },
     description: {
         content: String,
-        maurityReward: String,
         unusedFundsRefund: {
             type: Boolean,
             default: true
