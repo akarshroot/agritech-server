@@ -13,7 +13,8 @@ const managementRoutes = require("./routes/ManagementRoutes")
 const refreshTokenRoute = require("./routes/refreshToken")
 const cookies = require("cookie-parser");
 const path = require("path")
-const web3RouterVoting=require("./routes/web3RouterVoting");
+const web3RouterVoting = require("./routes/web3RouterVoting");
+const generalDataRoutes = require("./routes/GeneralDataRoutes");
 
 app.use(cookies());
 app.use(cors())
@@ -23,7 +24,7 @@ app.use(express.static('build'));
 mongoose.connect(`mongodb+srv://admin:${process.env.MONGO_PASS}@maincluster.yajbyem.mongodb.net/?retryWrites=true&w=majority`)
 
 mongoose.connection.on('connected', function () {
-    info('Mongoose connection open');
+  info('Mongoose connection open');
 });
 app.use('/api/web3/wallet', web3Router)
 app.use('/api/web3/fundingContracts', web3RouterFunding)
@@ -34,8 +35,9 @@ app.use("/api/user", userRoutes)
 app.use("/api/management", managementRoutes)
 app.use("/api/store", storeRoutes)
 app.use("/api/wallet/", walletRoutes)
+app.use("/api/data/", generalDataRoutes)
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '/build/index.html'));
-  });
+  res.sendFile(path.join(__dirname, '/build/index.html'));
+});
 module.exports = app
