@@ -88,7 +88,7 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
 
 })
 
-web3RouterFunding.post('/getApproval', auth, async (req,res) => {
+web3RouterFunding.post('/postcontribution', auth, async (req,res) => {
     const incommingData = req.body;
     const user = await User.findById(req.user._id);
     const contractFound = await Campaign.findById(incommingData.cid)
