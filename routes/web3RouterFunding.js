@@ -6,7 +6,7 @@ const deployContract = require("../web3/deploy");
 const { loadContractAt, getRaisedAmount } = require("../web3/web3funding");
 const auth = require("../middleware/auth");
 const {ContributeGasLessly}=require("../web3/web3permit");
-const {schduleRefundCall}=require("../web3/web3Utils/web3ExpiryHandling");
+const {scheduleRefundCall}=require("../web3/web3Utils/web3ExpiryHandling");
 
 const web3RouterFunding = require("express").Router()
 
@@ -77,7 +77,7 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
             associatedPlan: data.associatedPlan
         })
         const saved = await newContractModel.save()
-        schduleRefundCall(expire,contract._address)
+        scheduleRefundCall(expire,contract._address)
         res.status(200).json({
             status: "Deployed Successfully",
         })
@@ -94,11 +94,13 @@ web3RouterFunding.post('/getApproval', auth, async (req,res) => {
     const contractFound = await Campaign.findById(incommingData.cid)
     try{
         const txHash =await ContributeGasLessly(user.walletAddress,contractFound.address,incommingData.amount,incommingData.password)
+        const walletBalance = await getBalance(user.walletAddress)
         const tx = new ContributionTx({
             senderId: user._id,
             receiverId: contractFound._id,
             amount:incommingData.amount,
-            txHash:txHash.transactionHash
+            txHash:txHash.transactionHash,
+            balance: walletBalance
         })
         await tx.save()
         const existingUser = contractFound.contributors.find(e => e.userId.toString()===user._id.toString())

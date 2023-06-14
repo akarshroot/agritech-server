@@ -16,6 +16,10 @@ const transactionSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    balance: {
+        type: Number,
+        required: true
+    },
     txHash: {
         type: String,
         required: true

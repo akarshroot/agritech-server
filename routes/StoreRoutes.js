@@ -2,10 +2,11 @@ const { Router } = require("express");
 const Product = require("../models/Product");
 const { err } = require("../utils/logger");
 const Order = require("../models/Order");
-const User=require("../models/User");
-const {info}=require("console");
-const Transaction=require("../models/Transaction");
-const {TransferGaslessLy}=require("../web3/web3permit");
+const User = require("../models/User");
+const { info } = require("console");
+const Transaction = require("../models/Transaction");
+const { TransferGaslessLy } = require("../web3/web3permit");
+const { getBalance } = require("../web3/web3Wallet");
 
 const router = Router();
 
@@ -61,11 +62,13 @@ router.post("/order/create", async (req, res) => {
             price,
             password
         )
+        const walletBalance = await getBalance(buyer.walletAddress)
         const tx = new Transaction({
             senderId: userId,
             receiverId: order._id,
-            amount:price,
-            txHash:txHash.transactionHash
+            amount: price,
+            txHash: txHash.transactionHash,
+            balance: walletBalance
         })
         const savedTx = await tx.save();
         buyer.transactions.push(savedTx._id);
@@ -73,7 +76,7 @@ router.post("/order/create", async (req, res) => {
         ADMIN_USER.transactions.push(savedTx._id);
         await buyer.save();
         await ADMIN_USER.save();
-        res.status(200).json({error: false, message: "Order created!"})
+        res.status(200).json({ error: false, message: "Order created!" })
     } catch (e) {
         err(e)
         res.status(500).json({ error: true, message: "Internal Server Error" })

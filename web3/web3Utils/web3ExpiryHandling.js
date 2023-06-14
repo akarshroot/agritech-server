@@ -4,7 +4,7 @@ const web3=require('../web3.js');
 const {info}=require('../../utils/logger.js');
 
 
-function schduleRefundCall(expire,cAddress){
+function scheduleRefundCall(expire,cAddress){
     info("Schduling call...")
     const schduleTime = new Date((expire+2)*1000)
     info("Schdule->",schduleTime)
@@ -27,4 +27,4 @@ function schduleRefundCall(expire,cAddress){
     })
 }
 
-module.exports = {schduleRefundCall}
+module.exports = {scheduleRefundCall}
