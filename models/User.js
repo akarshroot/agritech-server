@@ -76,6 +76,10 @@ const userSchema = new mongoose.Schema({
     profileComplete: {
         type: Boolean,
         default: false
+    },
+    allowedCampaignReturnSlots: {
+        type: Number,
+        default: 3
     }
 });
 

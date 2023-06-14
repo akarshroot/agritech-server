@@ -11,11 +11,12 @@ const contractSchema = new mongoose.Schema({
         ref: 'Plan'
     },
     description: {
-        content: String,
-        unusedFundsRefund: {
-            type: Boolean,
-            default: true
-        }
+        type: String,
+        required: true
+    },
+    featuredImage: {
+        type: String,
+        default: "https://picsum.photos/536/354"
     },
     dateCreated:{
         type: Date,
