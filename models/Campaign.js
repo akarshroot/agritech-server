@@ -10,6 +10,40 @@ const contractSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Plan'
     },
+    pledges: [
+        {
+            name: {
+                type: String,
+                required: true
+            },
+            KCOLimit: {
+                type: Number,
+                required: true
+            },
+            selectedCrops: [
+                {
+                    crop: {
+                        type: mongoose.Schema.Types.ObjectId,
+                        required: true
+                    },
+                    quantity: {
+                        type: Number,
+                        required: true
+                    },
+                    unit: {
+                        type: String,
+                        required: true,
+                        min: 1,
+                        max: 100
+                    },
+                    discount: {
+                        type: Number,
+                        required: true
+                    }
+                }
+            ]
+        }
+    ],
     description: {
         type: String,
         required: true

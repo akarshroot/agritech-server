@@ -1,18 +1,22 @@
 const User = require("../models/User");
 const Campaign = require("../models/Campaign");
-const ContributionTx=require("../models/ContributionTx");
+const ContributionTx = require("../models/ContributionTx");
 const { info, err } = require("../utils/logger");
 const deployContract = require("../web3/deploy");
 const { loadContractAt, getRaisedAmount } = require("../web3/web3funding");
 const auth = require("../middleware/auth");
-const {ContributeGasLessly}=require("../web3/web3permit");
-const {scheduleRefundCall}=require("../web3/web3Utils/web3ExpiryHandling");
+const { ContributeGasLessly } = require("../web3/web3permit");
+const { scheduleRefundCall } = require("../web3/web3Utils/web3ExpiryHandling");
+const multer = require('multer');
+const uploadImageToCloud = require("../utils/firebaseStorage");
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 const web3RouterFunding = require("express").Router()
 
 web3RouterFunding.get("/:cid", async (req, res) => {
     try {
-        const contractraw = await Campaign.findById(req.params.cid).populate(['manager','campaignTransactions','associatedPlan'])
+        const contractraw = await Campaign.findById(req.params.cid).populate(['manager', 'campaignTransactions', 'associatedPlan'])
         const contract = loadContractAt(contractraw.address);
         const raisedAmount = await getRaisedAmount(contract);
 
@@ -51,8 +55,8 @@ web3RouterFunding.get('/', auth, async (req, res) => {
     }
 })
 
-web3RouterFunding.post('/deployContract',async (req,res) => {
-    try{
+web3RouterFunding.post('/deployContract', upload.single('featuredImage'), async (req, res) => {
+    try {
         const data = req.body
         const manager = await User.findById(data.userId)
         const expire = data.deadline
@@ -63,21 +67,22 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
             expire,
             data.minContribution,
         )
+        const featuredImageUrl = await uploadImageToCloud(req.file, contract._address, manager._id)
         const newContractModel = new Campaign({
             title: data.title,
             address: contract._address,
             target: data.target,
             deadline: expire,
-            description: {
-                content:data.description
-            },
+            description: data.description,
             minContri: data.minContribution,
             date: new Date(),
             manager: manager._id,
-            associatedPlan: data.associatedPlan
+            associatedPlan: data.associatedPlan,
+            featuredImage: featuredImageUrl,
+            pledges: data.pledges
         })
         const saved = await newContractModel.save()
-        scheduleRefundCall(expire,contract._address)
+        scheduleRefundCall(expire, contract._address)
         res.status(200).json({
             status: "Deployed Successfully",
         })
@@ -88,26 +93,26 @@ web3RouterFunding.post('/deployContract',async (req,res) => {
 
 })
 
-web3RouterFunding.post('/postcontribution', auth, async (req,res) => {
+web3RouterFunding.post('/postcontribution', auth, async (req, res) => {
     const incommingData = req.body;
     const user = await User.findById(req.user._id);
     const contractFound = await Campaign.findById(incommingData.cid)
-    try{
-        const txHash =await ContributeGasLessly(user.walletAddress,contractFound.address,incommingData.amount,incommingData.password)
+    try {
+        const txHash = await ContributeGasLessly(user.walletAddress, contractFound.address, incommingData.amount, incommingData.password)
         const walletBalance = await getBalance(user.walletAddress)
         const tx = new ContributionTx({
             senderId: user._id,
             receiverId: contractFound._id,
-            amount:incommingData.amount,
-            txHash:txHash.transactionHash,
+            amount: incommingData.amount,
+            txHash: txHash.transactionHash,
             balance: walletBalance
         })
         await tx.save()
-        const existingUser = contractFound.contributors.find(e => e.userId.toString()===user._id.toString())
-        if(!existingUser){
+        const existingUser = contractFound.contributors.find(e => e.userId.toString() === user._id.toString())
+        if (!existingUser) {
             const newContributor = {
-                userId:user._id,
-                deniedRequests:[]
+                userId: user._id,
+                deniedRequests: []
             }
             contractFound.contributors.push(newContributor)
             await contractFound.save()
@@ -115,15 +120,16 @@ web3RouterFunding.post('/postcontribution', auth, async (req,res) => {
         user.contributions.push(tx._id)
         await user.save()
         res.json({
-            status:"Success",
-            message:"Contibuted successfully"
+            status: "Success",
+            message: "Contibuted successfully"
         })
-    }catch(error){
+    } catch (error) {
         err(error.message)
-        res.json({ 
-            status:'Failed To Contribute',
+        res.json({
+            status: 'Failed To Contribute',
             error: true,
-            message: error.message })
+            message: error.message
+        })
     }
 }) // API for contribution in a contract
 
