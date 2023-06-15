@@ -23,7 +23,7 @@ const contractSchema = new mongoose.Schema({
             selectedCrops: [
                 {
                     crop: {
-                        type: mongoose.Schema.Types.ObjectId,
+                        type: String,
                         required: true
                     },
                     quantity: {
@@ -32,13 +32,13 @@ const contractSchema = new mongoose.Schema({
                     },
                     unit: {
                         type: String,
-                        required: true,
-                        min: 1,
-                        max: 100
+                        required: true
                     },
                     discount: {
                         type: Number,
-                        required: true
+                        required: true,
+                        min: 1,
+                        max: 100
                     }
                 }
             ]
