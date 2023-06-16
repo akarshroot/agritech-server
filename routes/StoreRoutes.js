@@ -8,6 +8,12 @@ const Transaction = require("../models/Transaction");
 const { TransferGaslessLy } = require("../web3/web3permit");
 const { getBalance } = require("../web3/web3Wallet");
 
+const multer = require('multer');
+const uploadImageToCloud = require("../utils/firebaseStorage");
+const { auth } = require("../middleware/auth.js");
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 const router = Router();
 
 // get new access token
@@ -80,6 +86,17 @@ router.post("/order/create", async (req, res) => {
     } catch (e) {
         err(e)
         res.status(500).json({ error: true, message: "Internal Server Error" })
+    }
+})
+
+
+router.post("/farmfresh/products/add", upload.any(), async (req, res) => {
+    try {
+        console.log(req.body);
+        console.log(req.files)
+        res.send()
+    } catch (error) {
+        res.status(500).send()
     }
 })
 

@@ -27,6 +27,7 @@ const planSchema = new mongoose.Schema({
             estCost: Number,
             estSale: Number,
             quantity: Number,
+            unit: Number,
             category: String
         }
     ],

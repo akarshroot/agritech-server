@@ -11,6 +11,9 @@ const inventorySchema = new mongoose.Schema({
     item: {
         type: String
     },
+    imageUrl: {
+        type: String
+    },
     quantity: {
         type: Number
     },

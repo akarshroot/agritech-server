@@ -27,16 +27,20 @@ router.post("/plan/create", auth, async (req, res) => {
     }
 });
 
-router.get("/plan/all", auth, async (req, res) => {
+router.get("/plan/:planId", auth, async (req, res) => {
     try {
         const uid = req.user._id
-        const plan = await Plan.find({ createdBy: uid })
+        const planId = req.params.planId
+        let plan
+        if (planId === "all")
+            plan = await Plan.find({ createdBy: uid })
+        else plan = await Plan.findOne({ _id: planId })
         if (plan)
             res.status(200).json({ error: false, data: plan })
-        else res.status(500).json({ error: true, message: "Could not find any plans." })
+        else res.status(400).json({ error: true, message: "Could not find any plans." })
     } catch (e) {
         err(e)
-        res.status(500).send()
+        res.status(500).json({error: true, message: e.message})
     }
 });
 
@@ -63,8 +67,8 @@ router.post("/plan/execute", auth, async (req, res) => {
         const pid = req.body.planId
         const userId = req.body.user
         const user = await User.findOne({ _id: userId })
-        if(user.currentPlan != undefined) {
-            res.status(400).json({error: true, message: "One plan is already under execution!"})
+        if (user.currentPlan != undefined) {
+            res.status(400).json({ error: true, message: "One plan is already under execution!" })
             return
         }
         const endDate = new Date()
