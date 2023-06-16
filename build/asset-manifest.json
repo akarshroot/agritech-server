@@ -1,11 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.d8415837.css",
-    "main.js": "/static/js/main.30a55255.js",
+    "main.css": "/static/css/main.8828b7fc.css",
+    "main.js": "/static/js/main.3bf074b0.js",
+    "static/media/farmFresh.jpg": "/static/media/farmFresh.5a29fcc7400e1646fe6c.jpg",
+    "static/media/agrineeds.jpg": "/static/media/agrineeds.f911257ee86af59770fc.jpg",
     "static/media/bg.jpg": "/static/media/bg.618311838ba790e3a032.jpg",
     "static/media/main-banner.png": "/static/media/main-banner.5598392a91b1fac1e504.png",
     "static/media/wheatFarm.jpg": "/static/media/wheatFarm.f8905763f38cc5def598.jpg",
+    "static/media/whitepaper_v1.pdf": "/static/media/whitepaper_v1.393b1d710a6412055112.pdf",
+    "static/media/Hind-Regular.ttf": "/static/media/Hind-Regular.4d32dabf118c5c7e3f48.ttf",
+    "static/media/Hind-Light.ttf": "/static/media/Hind-Light.24b3cba72f468690ce13.ttf",
     "static/media/plantation.jpg": "/static/media/plantation.3f1517b6f9cb288374c4.jpg",
+    "static/media/logoFF.png": "/static/media/logoFF.5ddda8339e7bd9817cc7.png",
+    "static/media/logoImg.svg": "/static/media/logoImg.c774d48e2e5bc8be782d4c006e81173a.svg",
+    "static/media/tag.png": "/static/media/tag.b9a77cd6c61f6972c2ec.png",
+    "static/media/rating.png": "/static/media/rating.e19c2c4e219a01a434ec.png",
     "static/media/grain.png": "/static/media/grain.3e6946ff43bbea6184d6.png",
     "static/media/about-shape.png": "/static/media/about-shape.a0217e1d23128c6821f9.png",
     "static/media/sales.png": "/static/media/sales.7c59007ec36e0be8b9d4.png",
@@ -17,11 +26,11 @@
     "static/media/hamburger-menu-dark.svg": "/static/media/hamburger-menu-dark.ad6c98d6d73a733e802520ed861139d7.svg",
     "index.html": "/index.html",
     "static/media/shopping_cart.svg": "/static/media/shopping_cart.e574678566198c80e15ac7adeb48f1c3.svg",
-    "main.d8415837.css.map": "/static/css/main.d8415837.css.map",
-    "main.30a55255.js.map": "/static/js/main.30a55255.js.map"
+    "main.8828b7fc.css.map": "/static/css/main.8828b7fc.css.map",
+    "main.3bf074b0.js.map": "/static/js/main.3bf074b0.js.map"
   },
   "entrypoints": [
-    "static/css/main.d8415837.css",
-    "static/js/main.30a55255.js"
+    "static/css/main.8828b7fc.css",
+    "static/js/main.3bf074b0.js"
   ]
 }

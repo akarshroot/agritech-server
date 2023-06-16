@@ -23,7 +23,7 @@ app.use(express.static('build'));
 
 mongoose.connect(`mongodb+srv://admin:${process.env.MONGO_PASS}@maincluster.yajbyem.mongodb.net/?retryWrites=true&w=majority`)
 
-mongoose.connection.on('connected', function () {
+mongoose.connection.on('connected', async function () {
   info('Mongoose connection open');
 });
 app.use('/api/web3/wallet', web3Router)
