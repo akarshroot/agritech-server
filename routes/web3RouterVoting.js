@@ -3,8 +3,9 @@ const Campaign=require('../models/Campaign')
 const Product=require('../models/Product')
 const User=require('../models/User')
 const Transaction=require('../models/Transaction')
+const Order=require('../models/Order')
 const {err, info}=require('../utils/logger')
-const {initateVoteReq, voteInReq, activateRequest}=require('../web3/web3funding')
+const {initateVoteReq, voteInReq, activateRequest, getRaisedAmount, loadContractAt}=require('../web3/web3funding')
 
 const web3RouterVoting = require('express').Router()
 
@@ -86,7 +87,7 @@ web3RouterVoting.post('/vote',auth,async (req, res) => {
         return
     }
     try{
-        await voteInReq(campaignDetails.address,voteNumber,user.walletAddress,password)
+        await voteInReq(campaignDetails.address,voteNumber-1,user.walletAddress,password)
         campaignDetails.voteRequests[voteNumber-1].votes+=1
         await campaignDetails.save()
         res.json({
@@ -112,6 +113,8 @@ web3RouterVoting.post("/useRequestedMoney",auth,async (req,res) => {
     const voteNumberReciever = campaignData.voteRequests[voteNumber-1].receiver
     let receiverDest = await Product.findById(voteNumberReciever)
     let isProduct = true;
+    const contractCamp = loadContractAt(campaignData.address)
+    info(receiverDest)
     if(!receiverDest._id){
         receiverDest = await User.findById(voteNumberReciever)
         isProduct = false;
@@ -126,16 +129,23 @@ web3RouterVoting.post("/useRequestedMoney",auth,async (req,res) => {
     }
     try{
         const response = await activateRequest(campaignData.address, user.walletAddress, voteNumber,password)
-        info(response)
+        // info(response)
         const tx = new Transaction({
             senderId:campaignData._id,
             receiverId:receiverDest._id,
             amount:campaignData.voteRequests[voteNumber-1].amount,
             txHash:response.transactionHash,
+            balance:await getRaisedAmount(contractCamp),
         })
         const savedTx = await tx.save()
         campaignData.campaignTransactions.push(savedTx._id);// also need to add this to the user
         !isProduct && receiverDest.transactions.push(savedTx._id);
+        if(isProduct){
+            await new Order({
+                product:receiverDest._id,
+                user:user._id,
+            }).save()
+        }
         await campaignData.save()
         await receiverDest.save()
         res.json({
