@@ -11,7 +11,7 @@ contract kissanFundContract2{
     uint public deadline;
     uint public minContribution;
     uint public noOfContributors;
-    uint public nonRefundedAmount = 0;
+    uint public maxSoFar;
     address[] public contributorsArray;
 
     struct EIP712Domain {
@@ -107,11 +107,13 @@ contract kissanFundContract2{
     function Contribute(uint256 _tokenamount,address sender) public returns(bool) {
         require(block.timestamp < deadline,"This contract has expired");
         require(_tokenamount >= minContribution, "Minimum contribution not met");
+        require(maxSoFar<target,"Cannot contribute further, Target already achieved");
         token.transferFrom(sender,address(this), _tokenamount);
         if(contributors[sender] == 0){
             contributorsArray.push(sender);
             noOfContributors++;
         }
+        maxSoFar += _tokenamount;
         contributors[sender] += _tokenamount;
         return true;
     }
@@ -134,7 +136,7 @@ contract kissanFundContract2{
         Request storage thisRequest = allRequests[_reqNumber];
         require(thisRequest.voters[sender] == false, "You have already voted!!");
         thisRequest.voters[sender] = true;
-        thisRequest.numberOfVoters++;
+        thisRequest.numberOfVoters= thisRequest.numberOfVoters+1;
     }
     function TransferToBuy(uint256 _reqNumber,uint8 v, bytes32 r, bytes32 s) public returns(bool){
         require(verifyTR(_reqNumber, v, r, s), "Invalid signature");
