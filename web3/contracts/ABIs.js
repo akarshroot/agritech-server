@@ -258,6 +258,19 @@ const FundingABI2 = [
 	},
 	{
 		"inputs": [],
+		"name": "maxSoFar",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "minContribution",
 		"outputs": [
 			{
@@ -272,19 +285,6 @@ const FundingABI2 = [
 	{
 		"inputs": [],
 		"name": "noOfContributors",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "nonRefundedAmount",
 		"outputs": [
 			{
 				"internalType": "uint256",

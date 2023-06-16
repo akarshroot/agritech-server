@@ -16,6 +16,15 @@ async function getRaisedAmount(contract) {
         return 'No Contract selected'
     }
 }
+async function getMaxAmountSoFar(contract) {
+    if (contract) {
+        const amount = await contract.methods.maxSoFar().call()
+        console.log('maxSoFar',amount)
+        return amount
+    } else {
+        return 'No Contract selected'
+    }
+}
 // initiate VoteReq
 async function initateVoteReq(cAddress, fromAddress, toAddess, amount, reason, password) {
     const contract = loadContractAt(cAddress)
@@ -67,10 +76,13 @@ async function activateRequest(cAddress, owner, reqNumber, password) {
     }
 }
 
+
+
 module.exports = {
     loadContractAt,
     getRaisedAmount,
     initateVoteReq,
     voteInReq,
     activateRequest,
+    getMaxAmountSoFar,
 }
