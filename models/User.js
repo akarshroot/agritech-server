@@ -21,7 +21,12 @@ const userSchema = new mongoose.Schema({
         type: String
     },
     landArea: {
-        type: String
+        size: {
+            type: Number,
+        },
+        unit: {
+            type: String,
+        }
     },
     phno: {
         type: String,

@@ -110,4 +110,13 @@ router.post("/admin/data", auth, async (req, res) => {
     }
 })
 
+router.post("/profile/update", auth, async (req, res) => {
+    try {
+        const profile = req.body
+        // const update = await User.findOne({ _id: profile.userId }, )
+    } catch (error) {
+
+    }
+})
+
 module.exports = router
