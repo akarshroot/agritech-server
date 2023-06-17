@@ -19,7 +19,6 @@ async function getRaisedAmount(contract) {
 async function getMaxAmountSoFar(contract) {
     if (contract) {
         const amount = await contract.methods.maxSoFar().call()
-        console.log('maxSoFar',amount)
         return amount
     } else {
         return 'No Contract selected'

@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.8828b7fc.css",
-    "main.js": "/static/js/main.3bf074b0.js",
+    "main.css": "/static/css/main.3ff14dc4.css",
+    "main.js": "/static/js/main.8d03d682.js",
     "static/media/farmFresh.jpg": "/static/media/farmFresh.5a29fcc7400e1646fe6c.jpg",
     "static/media/agrineeds.jpg": "/static/media/agrineeds.f911257ee86af59770fc.jpg",
     "static/media/bg.jpg": "/static/media/bg.618311838ba790e3a032.jpg",
@@ -22,15 +22,15 @@
     "static/media/procurement.png": "/static/media/procurement.8f14b895c2f2a3b25e86.png",
     "static/media/shape.png": "/static/media/shape.26b113ef06fe6cada749.png",
     "static/media/tick-box.svg": "/static/media/tick-box.bf70e493d35a04707ab0147f1b89c4ed.svg",
-    "static/media/hamburger-menu.svg": "/static/media/hamburger-menu.2de7ef214b3aaba2ecd6b3e9997ab86c.svg",
-    "static/media/hamburger-menu-dark.svg": "/static/media/hamburger-menu-dark.ad6c98d6d73a733e802520ed861139d7.svg",
+    "static/media/hamburger-menu.svg": "/static/media/hamburger-menu.9fab1f7b97e9d54546d831b98998d25f.svg",
+    "static/media/hamburger-menu-dark.svg": "/static/media/hamburger-menu-dark.8c6816fc70540504403f55fbd839e459.svg",
     "index.html": "/index.html",
     "static/media/shopping_cart.svg": "/static/media/shopping_cart.e574678566198c80e15ac7adeb48f1c3.svg",
-    "main.8828b7fc.css.map": "/static/css/main.8828b7fc.css.map",
-    "main.3bf074b0.js.map": "/static/js/main.3bf074b0.js.map"
+    "main.3ff14dc4.css.map": "/static/css/main.3ff14dc4.css.map",
+    "main.8d03d682.js.map": "/static/js/main.8d03d682.js.map"
   },
   "entrypoints": [
-    "static/css/main.8828b7fc.css",
-    "static/js/main.3bf074b0.js"
+    "static/css/main.3ff14dc4.css",
+    "static/js/main.8d03d682.js"
   ]
 }
