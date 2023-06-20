@@ -17,7 +17,15 @@ const web3RouterVoting = require("./routes/web3RouterVoting");
 const generalDataRoutes = require("./routes/GeneralDataRoutes");
 
 app.use(cookies());
-app.use(cors())
+app.use(cors({ 
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:3003",
+    "https://platform-agritech.web.app",
+    "https://35.192.7.28/"
+  ],
+  credentials: true
+ }))
 app.use(express.json())
 app.use(express.static('build'));
 
