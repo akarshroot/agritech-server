@@ -2,55 +2,61 @@ require('dotenv').config();
 const nodemailer = require('nodemailer')
 const { google } = require('googleapis');
 const OTP = require('../models/OTP');
+const { info, err } = require('./logger');
 const OAuth2 = google.auth.OAuth2;
 
 const createTransporter = async () => {
+  try {
     const oauth2Client = new OAuth2(
-        process.env.CLIENT_ID,
-        process.env.CLIENT_SECRET,
-        "https://developers.google.com/oauthplayground"
+      process.env.CLIENT_ID,
+      process.env.CLIENT_SECRET,
+      "https://developers.google.com/oauthplayground"
     );
 
     oauth2Client.setCredentials({
-        refresh_token: process.env.REFRESH_TOKEN
+      refresh_token: process.env.REFRESH_TOKEN
     });
-
+    
     const accessToken = await new Promise((resolve, reject) => {
-        oauth2Client.getAccessToken((err, token) => {
-            if (err) {
-                reject();
-            }
-            resolve(token);
-        });
-    });
-
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            type: "OAuth2",
-            user: process.env.EMAIL,
-            accessToken,
-            clientId: process.env.CLIENT_ID,
-            clientSecret: process.env.CLIENT_SECRET,
-            refreshToken: process.env.REFRESH_TOKEN
+      oauth2Client.getAccessToken((err, token) => {
+        if (err) {
+          reject("Refresh token has been revoked, generate new at https://developers.google.com/oauthplayground");
         }
+        resolve(token);
+      });
+    });
+  
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: process.env.EMAIL,
+        accessToken,
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        refreshToken: process.env.REFRESH_TOKEN
+      }
     });
 
     return transporter;
+  } catch (error) {
+    err("Error in transporter creation")
+    err(error)
+  }
 };
 
 const generateOTP = async (userId) => {
-    const otpDoc = await OTP({ user: userId }).save()
-    return otpDoc.otp
+  const otpDoc = await OTP({ user: userId }).save()
+  return otpDoc.otp
 }
 
 
 const emailDetails = (userEmail, code) => {
-    return {
-        from: process.env.EMAIL,
-        to: userEmail,
-        subject: "AgriTech - Verification Code",
-        html: `<!DOCTYPE html>
+  return {
+    from: process.env.EMAIL,
+    to: userEmail,
+    subject: "AgriTech - Verification Code",
+    html: `<!DOCTYPE html>
     <html>
     <head>
       <title>AgriTech - Verification Code</title>
@@ -115,17 +121,19 @@ const emailDetails = (userEmail, code) => {
     </body>
     </html>    
     `
-    }
+  }
 }
 
 async function sendMail(userEmail, code) {
-    try {
-        const email = emailDetails(userEmail, code)
-        let emailTransporter = await createTransporter();
-        await emailTransporter.sendMail(email);
-    } catch (error) {
-        console.log(error);
-    }
+  try {
+    const email = emailDetails(userEmail, code)
+    let emailTransporter = await createTransporter();
+    await emailTransporter.sendMail(email);
+    info("OTP sent to registered email.")
+  } catch (error) {
+    info("Err")
+    console.log(error);
+  }
 }
 
 module.exports = { sendMail, generateOTP }

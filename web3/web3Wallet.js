@@ -1,8 +1,9 @@
 const web3 = require('./web3')
 const abi = require("./contracts/ABIs.js").CoinsABI2
 const { Caddress } = require("./contracts/ABIs.js")
-const { info } = require("../utils/logger");
+const { info, warn } = require("../utils/logger");
 const keythereum = require('keythereum');
+const fs = require('fs')
 
 const contract = new web3.eth.Contract(abi, Caddress)
 
@@ -97,7 +98,9 @@ async function addAccount(password) {
 	const dk = keythereum.create()
 	const res = await web3.eth.personal.importRawKey(newPrivateKey, password) //private key and password
 	const keystoref = keythereum.dump(password,keykey,dk.salt, dk.iv , options);
-	keythereum.exportToFile(keystoref,'../../keystore');
+	// warn(keystoref)
+	fs.writeFile(`../keystore/UTC--${new Date().toISOString()}--${keystoref.address}`, JSON.stringify(keystoref), () => info("Key saved."))
+	// keythereum.exportToFile(keystoref,'../keystore/');
 	return res
 }
 

@@ -41,7 +41,7 @@ router.post("/signup", async (req, res) => {
 
 		//email verification
 		const code = await generateOTP(user._id)
-		sendMail(req.body.email, code)
+		await sendMail(req.body.email, code)
 
 		res
 			.status(201)
