@@ -97,7 +97,7 @@ async function addAccount(password) {
 	const dk = keythereum.create()
 	const res = await web3.eth.personal.importRawKey(newPrivateKey, password) //private key and password
 	const keystoref = keythereum.dump(password,keykey,dk.salt, dk.iv , options);
-	keythereum.exportToFile(keystoref,'../keystore');
+	keythereum.exportToFile(keystoref,'../../keystore');
 	return res
 }
 
